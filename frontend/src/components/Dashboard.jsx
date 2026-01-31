@@ -53,9 +53,7 @@ const Dashboard = () => {
         };
         const loadMap = async () => {
             try {
-                const response = await fetch(
-                    "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
-                );
+                const response = await fetch("https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json");
                 if (!response.ok) {
                     throw new Error("Map data failed to load.");
                 }
@@ -87,7 +85,7 @@ const Dashboard = () => {
     const mapPaths = useMemo(() => {
         if (!mapFeatures.length) return [];
         const collection = { type: "FeatureCollection", features: mapFeatures };
-        const projection = geoNaturalEarth1().fitSize([560, 260], collection);
+        const projection = geoNaturalEarth1().center([50, 25]).scale(500).translate([280, 135]);
         const path = geoPath(projection);
         return mapFeatures.map((item) => ({
             iso: item.properties.ISO_A3,
@@ -336,7 +334,11 @@ const Dashboard = () => {
                                                             <path
                                                                 key={item.iso}
                                                                 d={item.d}
-                                                                fill={isFocus ? getSentimentColor(data?.sentiment) : "#DDF2F8"}
+                                                                fill={
+                                                                    isFocus
+                                                                        ? getSentimentColor(data?.sentiment)
+                                                                        : "#DDF2F8"
+                                                                }
                                                                 stroke={isFocus ? "#FFFFFF" : "#FFFFFF"}
                                                                 strokeWidth={isActive ? 2.2 : 0.8}
                                                                 opacity={isFocus ? 1 : 0.8}
