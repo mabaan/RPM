@@ -9,9 +9,30 @@ import SignalDetail from "./subcomponents/SignalDetail";
 import IncomingSignalList from "./subcomponents/IncomingSignalList";
 
 const sentimentCountries = [
-    { iso: "PAK", name: "Pakistan", sentiment: -0.35, label: "Rising Concerns" },
-    { iso: "EGY", name: "Egypt", sentiment: 0.1, label: "Mixed Signals" },
-    { iso: "ARE", name: "UAE", sentiment: 0.55, label: "Positive Momentum" },
+    {
+        iso: "PAK",
+        name: "Pakistan",
+        sentiment: -0.35,
+        label: "Rising Concerns",
+        brandTrust: 45,
+        summary: "Social chatter indicates growing frustration regarding app stability and localized service disruptions. Brand trust has dipped by 12% MoM."
+    },
+    {
+        iso: "EGY",
+        name: "Egypt",
+        sentiment: 0.1,
+        label: "Mixed Signals",
+        brandTrust: 62,
+        summary: "Market sentiment is stabilizing following the recent currency fluctuation. Digital adoption is high, but user experience complaints are surfacing."
+    },
+    {
+        iso: "ARE",
+        name: "UAE",
+        sentiment: 0.55,
+        label: "Positive Momentum",
+        brandTrust: 88,
+        summary: "Strong positive sentiment driven by the new premium card launch. Customer loyalty metrics are at an all-time high."
+    },
 ];
 
 const getSentimentColor = (value) => {
@@ -81,9 +102,11 @@ const Dashboard = () => {
         const projection = geoNaturalEarth1().center([50, 25]).scale(500).translate([280, 135]);
         const path = geoPath(projection);
         const graticule = path(geoGraticule10());
+
         return mapFeatures.map((item) => ({
             iso: item.properties.ISO_A3,
             d: path(item),
+            centroid: path.centroid(item), // Calculate centroid [x, y]
             graticule,
         }));
     }, [mapFeatures]);
