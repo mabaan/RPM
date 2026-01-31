@@ -32,12 +32,22 @@ def _deterministic_prompt(
     # Policy excerpts from RAG
     relevant_policy_excerpts = []
     for snippet in playbook_snippets[:3]:
-        relevant_policy_excerpts.append(snippet.get("text", ""))
+        text = snippet.get("text", "")
+        if text:
+            relevant_policy_excerpts.append(text[:300])  # Truncate long policies
     
-    # Similar cases would come from event retrieval
-    similar_cases = [
-        "See event history for patterns related to this topic"
-    ]
+    # Check for policy constraint mentions in playbooks
+    similar_cases = []
+    playbook_text = " ".join([s.get("text", "") for s in playbook_snippets])
+    
+    if "COUNTRY_LAW" in playbook_text or "CRITICAL" in playbook_text:
+        similar_cases.append("Policy constraints detected in playbook - review for potential violations")
+    
+    if scores.compliance >= 60:
+        similar_cases.append("High compliance risk detected - legal review may be required")
+    
+    if not similar_cases:
+        similar_cases.append("No similar historical patterns identified")
     
     # Key considerations based on routing and signals
     key_considerations = [

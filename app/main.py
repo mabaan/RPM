@@ -67,25 +67,28 @@ async def run_demo(request: DemoRequest) -> List[CleanDemoCard]:
     for event in events[:limit]:
         card = process_incident(EventRecord(**event))
         
+        # Create title from summary
+        title = card.signals.summary[:80] + "..." if len(card.signals.summary) > 80 else card.signals.summary
+        
+        # Extract evidence with sources
+        evidence_snippets = [
+            f"[{ev.source} @ {ev.timestamp}] {ev.quote}"
+            for ev in card.signals.evidence
+        ]
+        
+        # Get policy references from citations
+        policy_refs = card.reverse_prompt.citations.get("playbook_references", [])
+        policy_references = [ref for ref in policy_refs if ref]
+        
         clean_card = CleanDemoCard(
-            event_id=card.incident.event_id,
-            source=card.incident.source,
-            text=card.incident.text,
-            assigned_to=card.routing.primary_team,
+            title=title,
+            category=card.signals.topic,
             priority=card.routing.priority,
-            watchers=card.routing.watchers,
             risk_scores=card.scores,
-            topic=card.signals.topic,
-            sentiment=card.signals.sentiment,
-            urgency=card.signals.urgency,
-            situation_background=card.reverse_prompt.employee_prompt.situation_background,
-            customer_context=card.reverse_prompt.employee_prompt.customer_context,
-            evidence_analysis=card.reverse_prompt.employee_prompt.evidence_analysis,
-            relevant_policy_excerpts=card.reverse_prompt.employee_prompt.relevant_policy_excerpts,
+            reverse_prompt=card.reverse_prompt.employee_prompt,
+            evidence_snippets=evidence_snippets,
+            policy_references=policy_references,
             similar_cases=card.reverse_prompt.employee_prompt.similar_cases,
-            key_considerations=card.reverse_prompt.employee_prompt.key_considerations,
-            status=card.status,
-            guardrails_passed=card.guardrails.passed,
         )
         clean_cards.append(clean_card)
     

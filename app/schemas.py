@@ -102,31 +102,19 @@ class DashboardCard(BaseModel):
 
 class CleanDemoCard(BaseModel):
     """Formatted output for demo display"""
-    event_id: str
-    source: str
-    text: str
     
-    # Routing
-    assigned_to: str
-    priority: str
-    watchers: List[str]
+    # Title and metadata
+    title: str  # Brief incident title
+    category: str  # Topic/category
+    priority: str  # P1, P2, P3
     
-    # Risk Scores
+    # Metrics
     risk_scores: RiskScores
     
-    # Signals
-    topic: str
-    sentiment: str
-    urgency: str
+    # Reverse Prompt - Contextual background for employee
+    reverse_prompt: ReversePrompt
     
-    # Reverse Prompt - Context for Employee
-    situation_background: str
-    customer_context: str
-    evidence_analysis: List[str]
-    relevant_policy_excerpts: List[str]
-    similar_cases: List[str]
-    key_considerations: List[str]
-    
-    # Status
-    status: str
-    guardrails_passed: bool
+    # Supporting evidence and references
+    evidence_snippets: List[str]  # Evidence with sources
+    policy_references: List[str]  # Relevant policies from RAG
+    similar_cases: List[str]  # Similar historical cases
