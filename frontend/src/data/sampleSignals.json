@@ -1,0 +1,244 @@
+[
+  {
+    "id": "CASE-2001",
+    "title": "The customer is requesting a copy of their personal data and the deletion of the...",
+    "summary": "Customer seeks full data access report and erasure of marketing profile; repeat privacy request across channels.",
+    "content": "Please provide a copy of all personal data you hold and delete my marketing profile.",
+    "user": "privacy_requester",
+    "source": "Email",
+    "sourceType": "Customer Support",
+    "type": "Data Privacy",
+    "category": "policy",
+    "priority": "P1",
+    "riskLevel": "High",
+    "timestamp": "2026-01-31 10:45",
+    "confidence": 0.89,
+    "aiAnalysis": "Repeated GDPR-style access and erasure request. Needs legal-approved response and routing to privacy team.",
+    "risk_scores": {
+      "virality": 5,
+      "churn": 20,
+      "compliance": 70,
+      "financial": 10,
+      "operational": 15
+    },
+    "reverse_prompt": {
+      "situation_background": "The customer has made multiple requests across channels asking for their personal data and deletion of marketing profiles.",
+      "customer_context": "The customer is repeatedly requesting data access and deletion under privacy rights.",
+      "evidence_analysis": [
+        "[chat @ 2026-01-31T10:06:00Z] Please provide a copy of all personal data you hold and delete my marketing profile.",
+        "[email @ 2026-01-31T09:05:00Z] Please provide a copy of my personal data and remove my marketing profile.",
+        "[sns @ 2026-01-31T11:01:00Z] How do I delete my data? I want my account info removed.",
+        "[phone @ 2026-01-31T10:10:00Z] I want to know what personal data you store and how to remove it.",
+        "[crm @ 2026-01-31T10:45:00Z] Customer requested deletion of personal data and an access report. Route to Legal."
+      ],
+      "relevant_policy_excerpts": [
+        "From the Global Policy: 'If the customer asks about their personal data....'",
+        "From the Legal Playbook: 'Data Privacy Requests (PDPL aware handling): If the customer requests....'"
+      ],
+      "similar_cases": [
+        "evt_chat_009",
+        "evt_email_005",
+        "evt_sns_009",
+        "evt_phone_011",
+        "evt_crm_010"
+      ],
+      "key_considerations": [
+        "The customer's repeated requests indicate a significant concern about their data privacy rights under GDPR.",
+        "Ensure that all responses comply with GDPR requirements for data access and erasure requests.",
+        "Avoid making promises about immediate outcomes and ensure that all communications are routed through Legal for approval."
+      ]
+    },
+    "evidence": [
+      { "source": "Email", "text": "Subject: Data deletion and access report", "time": "10:45" },
+      { "source": "Chat", "text": "Customer wants marketing profile removed", "time": "10:06" }
+    ],
+    "status": "Unverified"
+  },
+  {
+    "id": "CASE-2002",
+    "title": "Multiple users reporting a suspicious login page requesting ATM PINs",
+    "summary": "Coordinated phishing attempt targeting mobile users via fake login page.",
+    "content": "@MashreqHelp I saw a tweet saying your login page is asking for my ATM PIN. Is this real? #security",
+    "user": "SarahSpace",
+    "source": "Twitter",
+    "sourceType": "Social Media",
+    "type": "Fraud Rumor",
+    "category": "fraud",
+    "priority": "P1",
+    "riskLevel": "High",
+    "timestamp": "2026-01-31 10:42",
+    "confidence": 0.92,
+    "aiAnalysis": "Potential phishing campaign detected. Cross-referenced with similar reports in the last hour.",
+    "risk_scores": {
+      "virality": 65,
+      "churn": 35,
+      "compliance": 30,
+      "financial": 55,
+      "operational": 20
+    },
+    "reverse_prompt": {
+      "customer_context": "Multiple customers on social channels are reporting prompts for ATM PINs on login.",
+      "key_considerations": [
+        "Treat as phishing; do not ask for ATM PINs.",
+        "Issue public advisory and force logout of suspicious sessions.",
+        "Coordinate with fraud and incident response teams."
+      ],
+      "evidence_analysis": [
+        "[twitter @ 2026-01-31T10:40:00Z] Login page asking for PIN? #scam",
+        "[email @ 2026-01-31T10:35:00Z] Suspicious link in SMS",
+        "[chat @ 2026-01-31T10:32:00Z] Received OTP then asked for PIN"
+      ],
+      "relevant_policy_excerpts": [
+        "Fraud Playbook: Never request ATM PIN; escalate to Fraud Ops immediately."
+      ],
+      "similar_cases": ["fraud_evt_101", "fraud_evt_099"]
+    },
+    "evidence": [
+      { "source": "Twitter", "text": "Login page asking for PIN? #scam", "time": "10:40" },
+      { "source": "Email", "text": "Subject: Suspicious link in SMS", "time": "10:35" }
+    ],
+    "status": "Unverified"
+  },
+  {
+    "id": "CASE-2003",
+    "title": "International transfers intermittently failing with 404 errors",
+    "summary": "12% of chatbot sessions in last 15 mins report 'Transfer Error' on international transfers.",
+    "content": "I cannot transfer money to my international beneficiary, getting error 404",
+    "user": "Session_8821",
+    "source": "Chatbot",
+    "sourceType": "Internal",
+    "type": "Service Incident",
+    "category": "ops",
+    "priority": "P2",
+    "riskLevel": "Medium",
+    "timestamp": "2026-01-31 10:55",
+    "confidence": 0.9,
+    "aiAnalysis": "Repeat functional failure in International Transfers module; likely partial outage.",
+    "risk_scores": {
+      "virality": 15,
+      "churn": 25,
+      "compliance": 10,
+      "financial": 35,
+      "operational": 55
+    },
+    "reverse_prompt": {
+      "customer_context": "Internal bot sessions showing transfer failures for cross-border payments.",
+      "key_considerations": [
+        "Check recent deploys to transfers service.",
+        "Prioritize HNW and SME customers affected.",
+        "Communicate expected fix ETA within 30 minutes."
+      ],
+      "evidence_analysis": [
+        "[chatbot @ 2026-01-31T10:50:00Z] Error 404 on /transfer/intl",
+        "[feedback @ 2026-01-31T10:52:00Z] App crashing when sending money to UK"
+      ],
+      "relevant_policy_excerpts": [
+        "Incident SOP: Notify status page for >5% failure rate within 15 minutes."
+      ],
+      "similar_cases": ["ops_evt_210", "ops_evt_188"]
+    },
+    "evidence": [
+      { "source": "Chatbot Logs", "text": "Error 404 on API endpoint /transfer/intl", "time": "10:50" },
+      { "source": "Feedback", "text": "App crashing when sending money to UK", "time": "10:52" }
+    ],
+    "status": "Escalated"
+  },
+  {
+    "id": "CASE-2004",
+    "title": "Cardholder disputes overseas charges and requests immediate card freeze",
+    "summary": "Customer saw multiple overseas POS charges after recent travel; requests freeze and chargeback guidance.",
+    "content": "I just landed and see three charges from a store in Madrid. I didn't make them—freeze my card now.",
+    "user": "travelsafe99",
+    "source": "Phone",
+    "sourceType": "Contact Center",
+    "type": "Card Dispute",
+    "category": "fraud",
+    "priority": "P1",
+    "riskLevel": "High",
+    "timestamp": "2026-01-31 08:20",
+    "confidence": 0.88,
+    "aiAnalysis": "Likely card-present fraud post-travel; needs immediate block, reissue, and provisional credit workflow.",
+    "risk_scores": {
+      "virality": 10,
+      "churn": 45,
+      "compliance": 25,
+      "financial": 65,
+      "operational": 30
+    },
+    "reverse_prompt": {
+      "situation_background": "Customer returned from EU trip; card charges surfaced while in-flight/arrival.",
+      "customer_context": "High-travel customer, platinum tier; expects swift resolution and replacement card.",
+      "evidence_analysis": [
+        "[phone @ 2026-01-31T08:20:00Z] Freeze my card; Madrid charges are not mine.",
+        "[sms @ 2026-01-31T08:18:00Z] Alert: €240 POS Madrid",
+        "[app @ 2026-01-31T08:15:00Z] Customer attempted to disable card but flow failed",
+        "[crm @ 2026-01-31T08:22:00Z] Tier: Platinum; last travel location recorded: CDG",
+        "[fraud @ 2026-01-31T08:25:00Z] Device fingerprint mismatch on recent authorization"
+      ],
+      "relevant_policy_excerpts": [
+        "Chargeback Playbook: initiate block and replace within 15 minutes for suspected CP fraud post-travel.",
+        "Customer Experience: provide temporary digital card if customer is abroad."
+      ],
+      "similar_cases": ["card_evt_412", "card_evt_399", "card_evt_255"],
+      "key_considerations": [
+        "Offer immediate card freeze and digital replacement.",
+        "File dispute and set expectations on provisional credit timeline.",
+        "Check travel notice; adjust fraud rules to prevent further false declines once new card active."
+      ]
+    },
+    "evidence": [
+      { "source": "SMS Alert", "text": "€240 POS Madrid - was this you?", "time": "08:18" },
+      { "source": "CRM", "text": "Tier Platinum; travel notice ended yesterday", "time": "08:22" }
+    ],
+    "status": "Unverified"
+  },
+  {
+    "id": "CASE-2005",
+    "title": "Mobile check deposit images rejected due to blurry capture",
+    "summary": "Spike in rejected mobile check deposits; users report blurry capture errors after latest app update.",
+    "content": "The app keeps saying my check image is blurry. It worked last week.",
+    "user": "smb_owner_22",
+    "source": "App Feedback",
+    "sourceType": "Direct Feedback",
+    "type": "UX Defect",
+    "category": "ops",
+    "priority": "P2",
+    "riskLevel": "Medium",
+    "timestamp": "2026-01-31 09:40",
+    "confidence": 0.87,
+    "aiAnalysis": "Image preprocessing regression likely introduced in latest mobile release; affecting deposit completion for SME users.",
+    "risk_scores": {
+      "virality": 20,
+      "churn": 30,
+      "compliance": 15,
+      "financial": 25,
+      "operational": 50
+    },
+    "reverse_prompt": {
+      "situation_background": "Recent app update modified camera SDK and compression settings.",
+      "customer_context": "SMB owners depositing payroll checks; failures delay employee payments.",
+      "evidence_analysis": [
+        "[app @ 2026-01-31T09:38:00Z] Blurry image rejection on front side",
+        "[support @ 2026-01-31T09:35:00Z] Customer cannot submit check due to blur warning",
+        "[logs @ 2026-01-31T09:32:00Z] CV pipeline flag: focus_score < 0.42",
+        "[release @ 2026-01-30T23:10:00Z] Camera SDK upgraded to v6.4.1",
+        "[status @ 2026-01-31T09:20:00Z] Error rate 11% vs baseline 2%"
+      ],
+      "relevant_policy_excerpts": [
+        "Operations SOP: escalate imaging defects exceeding 5% failure to L2 within 30 minutes.",
+        "Compliance Note: ensure duplicate check detection remains active when bypassing quality gates."
+      ],
+      "similar_cases": ["ux_evt_077", "ops_evt_133"],
+      "key_considerations": [
+        "Roll back or hotfix camera SDK; A/B with prior version.",
+        "Communicate workaround: take photo on flat surface with ample light.",
+        "Monitor duplicate detection during any temporary relaxation of blur threshold."
+      ]
+    },
+    "evidence": [
+      { "source": "App Logs", "text": "focus_score below threshold", "time": "09:32" },
+      { "source": "Support", "text": "Customer unable to submit deposit due to blur warning", "time": "09:35" }
+    ],
+    "status": "Open"
+  }
+]

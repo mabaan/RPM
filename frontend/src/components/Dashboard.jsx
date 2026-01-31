@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { geoNaturalEarth1, geoPath, geoGraticule10 } from "d3-geo";
 import { feature } from "topojson-client";
 import { Activity, Mail, MessageSquare, FileText } from "lucide-react";
-import { syntheticSocialData } from "../data/syntheticData";
+import sampleSignals from "../data/sampleSignals.json";
 import DashboardHeader from "./subcomponents/DashboardHeader";
 import SentimentHeatmap from "./subcomponents/SentimentHeatmap";
 import SignalDetail from "./subcomponents/SignalDetail";
@@ -115,7 +115,12 @@ const Dashboard = () => {
                             )}
                         </div>
 
-                        <IncomingSignalList signals={syntheticSocialData} selectedSignal={selectedSignal} onSelectSignal={setSelectedSignal} getSourceIcon={getSourceIcon} />
+                        <IncomingSignalList
+                            signals={sampleSignals}
+                            selectedSignal={selectedSignal}
+                            onSelectSignal={setSelectedSignal}
+                            getSourceIcon={getSourceIcon}
+                        />
                     </div>
 
                     <div className="absolute -bottom-20 -left-20 w-96 h-96 bg-mashreq-orange/5 rounded-full blur-[100px] pointer-events-none mix-blend-multiply"></div>
