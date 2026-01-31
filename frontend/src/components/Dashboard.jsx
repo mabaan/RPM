@@ -59,6 +59,16 @@ const Dashboard = () => {
     const [mapError, setMapError] = useState(null);
 
     useEffect(() => {
+        const cls = "internal-detail";
+        if (selectedSignal) {
+            document.body.classList.add(cls);
+        } else {
+            document.body.classList.remove(cls);
+        }
+        return () => document.body.classList.remove(cls);
+    }, [selectedSignal]);
+
+    useEffect(() => {
         const focusIsos = new Set(sentimentCountries.map((country) => country.iso));
         const focusByName = {
             Pakistan: "PAK",

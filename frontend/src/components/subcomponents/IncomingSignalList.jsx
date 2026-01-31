@@ -11,15 +11,18 @@ const IncomingSignalList = ({ signals, selectedSignal, onSelectSignal, getSource
     <div className="flex-1 flex flex-col min-w-[340px]" style={{ marginLeft: "10px" }}>
         <div className="flex justify-between items-end mb-4 px-2">
             <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Incoming Cases</h3>
-            <span
-                className="text-[10px] text-white bg-mashreq-orange px-2 py-1 rounded-full shadow-sm animate-pulse"
-                style={{ marginRight: "15px" }}>
-                Live
-            </span>
         </div>
 
-        <div className="flex-1 overflow-y-auto pr-2 custom-scrollbar h-0 min-h-full pb-4" style={{ marginRight: "15px", display: "grid", gap: "10px" }}>
-            {signals.map((signal) => {
+        <div
+            className={`flex-1 pr-2 ${selectedSignal ? "no-scrollbar" : "custom-scrollbar"}`}
+            style={{
+                marginRight: "10px",
+                display: "grid",
+                gap: "6px",
+                minHeight: 0,
+                paddingBottom: "6px",
+            }}>
+            {(selectedSignal ? signals : signals.slice(0, 3)).map((signal, idx) => {
                 const risk = palette[signal.riskLevel] || palette.Low;
                 const isActive = selectedSignal?.id === signal.id;
                 return (
@@ -27,11 +30,12 @@ const IncomingSignalList = ({ signals, selectedSignal, onSelectSignal, getSource
                         key={signal.id}
                         onClick={() => onSelectSignal(signal)}
                         style={{
-                            borderRadius: "16px",
-                            padding: "14px 16px",
+                            borderRadius: "12px",
+                            padding: "10px 12px",
+                            marginTop: idx === 0 ? "10px" : "0px",
                             border: isActive ? "1px solid rgba(249,115,22,0.45)" : risk.border,
                             background: isActive ? "linear-gradient(135deg, rgba(255,255,255,0.95), rgba(255,247,237,0.9))" : "rgba(255,255,255,0.7)",
-                            boxShadow: isActive ? "0 8px 18px rgba(15,23,42,0.12)" : "0 4px 10px rgba(15,23,42,0.06)",
+                            boxShadow: isActive ? "0 6px 14px rgba(15,23,42,0.1)" : "0 3px 8px rgba(15,23,42,0.06)",
                             cursor: "pointer",
                             transition: "transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease",
                             transform: isActive ? "translateY(-1px)" : "translateY(0)",
@@ -39,18 +43,18 @@ const IncomingSignalList = ({ signals, selectedSignal, onSelectSignal, getSource
                         className="group hover:shadow-md"
                         onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-2px)")}
                         onMouseLeave={(e) => (e.currentTarget.style.transform = isActive ? "translateY(-1px)" : "translateY(0)")}>
-                        <div className="flex justify-between items-start" style={{ marginBottom: "8px" }}>
-                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                        <div className="flex justify-between items-start" style={{ marginBottom: "4px" }}>
+                            <div style={{ display: "flex", alignItems: "center", gap: "6px" }}>
                                 <div
                                     style={{
                                         display: "inline-flex",
                                         alignItems: "center",
                                         gap: "6px",
-                                        padding: "6px 10px",
+                                        padding: "5px 8px",
                                         borderRadius: "999px",
                                         background: risk.badgeBg,
                                         color: risk.badgeText,
-                                        fontSize: "11px",
+                                        fontSize: "10px",
                                         fontWeight: 700,
                                         letterSpacing: "0.04em",
                                         textTransform: "uppercase",
@@ -68,8 +72,8 @@ const IncomingSignalList = ({ signals, selectedSignal, onSelectSignal, getSource
                             style={{
                                 margin: 0,
                                 color: "#111827",
-                                fontSize: "15px",
-                                lineHeight: 1.4,
+                                fontSize: "13.5px",
+                                lineHeight: 1.32,
                                 fontWeight: 700,
                             }}>
                             {signal.summary || signal.content}
@@ -89,9 +93,9 @@ const IncomingSignalList = ({ signals, selectedSignal, onSelectSignal, getSource
                             </span>
                             <span
                                 style={{
-                                    fontSize: "11px",
-                                    padding: "5px 8px",
-                                    borderRadius: "10px",
+                                    fontSize: "10px",
+                                    padding: "4px 7px",
+                                    borderRadius: "8px",
                                     background: isActive ? "rgba(249,115,22,0.1)" : "#F3F4F6",
                                     color: isActive ? "#f97316" : "#4B5563",
                                     fontFamily: "ui-monospace",
@@ -102,6 +106,27 @@ const IncomingSignalList = ({ signals, selectedSignal, onSelectSignal, getSource
                     </div>
                 );
             })}
+            {signals.length > 3 ? (
+                <button
+                    type="button"
+                    style={{
+                        marginTop: "4px",
+                        marginBottom: "25px",
+                        padding: "10px 12px 12px 12px",
+                        borderRadius: "12px",
+                        border: "1px solid rgba(249,115,22,0.25)",
+                        background: "linear-gradient(135deg, #fff7ed, #ffe6d5)",
+                        color: "#9a3412",
+                        fontWeight: 800,
+                        fontSize: "10.5px",
+                        letterSpacing: "0.07em",
+                        textTransform: "uppercase",
+                        width: "100%",
+                        boxShadow: "0 5px 10px rgba(249,115,22,0.12)",
+                    }}>
+                    See All
+                </button>
+            ) : null}
         </div>
     </div>
 );

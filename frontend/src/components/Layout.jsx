@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Dashboard from './Dashboard';
 import Reports from './Reports';
@@ -6,6 +6,43 @@ import RootCause from './RootCause/RootCause';
 
 const Layout = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
+    const [nowText, setNowText] = useState('');
+
+    const toOrdinal = (day) => {
+        const d = Number(day);
+        if (d > 3 && d < 21) return `${d}th`;
+        const mod = d % 10;
+        if (mod === 1) return `${d}st`;
+        if (mod === 2) return `${d}nd`;
+        if (mod === 3) return `${d}rd`;
+        return `${d}th`;
+    };
+
+    const formatAbuDhabi = (date) => {
+        const formatter = new Intl.DateTimeFormat('en-GB', {
+            timeZone: 'Asia/Dubai',
+            weekday: 'long',
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+            hour12: false,
+        });
+        const parts = formatter.formatToParts(date).reduce((acc, part) => {
+            acc[part.type] = part.value;
+            return acc;
+        }, {});
+        const dayOrdinal = toOrdinal(parts.day);
+        return `${parts.weekday}, ${dayOrdinal} ${parts.month} ${parts.year}, ${parts.hour}:${parts.minute}:${parts.second}`;
+    };
+
+    useEffect(() => {
+        setNowText(formatAbuDhabi(new Date()));
+        const id = setInterval(() => setNowText(formatAbuDhabi(new Date())), 1000);
+        return () => clearInterval(id);
+    }, []);
 
     return (
         <div className="relative w-full h-screen overflow-hidden text-gray-900 selection:bg-orange-500/30 font-sans bg-[#F9F7F2]">
@@ -36,7 +73,9 @@ const Layout = () => {
                     </div>
 
                     <div className="flex items-center gap-4">
-                        <p className="text-sm text-gray-500 font-mono">{new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</p>
+                        <p className="text-xs text-gray-600 font-semibold tracking-wide text-right leading-tight">
+                            {nowText}
+                        </p>
                     </div>
                 </header>
 

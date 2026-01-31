@@ -48,6 +48,25 @@ body {
   border-radius: 3px;
 }
 
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.internal-detail {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.internal-detail::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
 /* Animations */
 @keyframes fadeIn {
   from {

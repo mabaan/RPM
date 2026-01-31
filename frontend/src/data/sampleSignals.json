@@ -240,5 +240,151 @@
       { "source": "Support", "text": "Customer unable to submit deposit due to blur warning", "time": "09:35" }
     ],
     "status": "Open"
+  },
+  {
+    "id": "CASE-2006",
+    "title": "ATM network outage causing cardless cash failures",
+    "summary": "Customers report cardless cash withdrawals failing with generic error at multiple branches in Dubai.",
+    "content": "Cardless cash isn't working at Mall of Emirates ATM. Tried twice, got error.",
+    "user": "dxb_client_77",
+    "source": "App Feedback",
+    "sourceType": "Mobile App",
+    "type": "Service Incident",
+    "category": "ops",
+    "priority": "P1",
+    "riskLevel": "High",
+    "timestamp": "2026-01-31 11:20",
+    "confidence": 0.9,
+    "aiAnalysis": "Likely regional ATM switch issue impacting cardless cash; cluster of failures within 15 minutes across 3 branches.",
+    "risk_scores": {
+      "virality": 25,
+      "churn": 28,
+      "compliance": 12,
+      "financial": 40,
+      "operational": 60
+    },
+    "reverse_prompt": {
+      "situation_background": "Cardless cash transactions timing out on ATM switch in Dubai region.",
+      "customer_context": "Retail customers attempting quick withdrawals; repeated failures increase abandonment.",
+      "evidence_analysis": [
+        "[app @ 2026-01-31T11:18:00Z] Cardless cash timed out at MOE ATM",
+        "[atm @ 2026-01-31T11:17:00Z] Switch response code 91 on cardless cash",
+        "[ivr @ 2026-01-31T11:15:00Z] Customer reports two failed cardless attempts",
+        "[monitoring @ 2026-01-31T11:14:00Z] Cardless success rate dropped to 62% in DXB region",
+        "[ops @ 2026-01-31T11:12:00Z] Recent config push to ATM switch DXB cluster"
+      ],
+        "relevant_policy_excerpts": [
+        "ATM Ops: roll back switch config if regional success rate <90% for 10 minutes.",
+        "Customer Care: offer nearest functioning ATM and fee waiver for retries."
+      ],
+      "similar_cases": ["ops_evt_302", "atm_evt_118"],
+      "key_considerations": [
+        "Coordinate with ATM switch team for immediate rollback.",
+        "Communicate outage banner in app for DXB region.",
+        "Track refunds for failed cardless transactions."]
+    },
+    "evidence": [
+      { "source": "App", "text": "Cardless cash timed out at MOE ATM", "time": "11:18" },
+      { "source": "ATM Logs", "text": "Switch response 91 on cardless cash", "time": "11:17" }
+    ],
+    "status": "Open"
+  },
+  {
+    "id": "CASE-2007",
+    "title": "Payments API latency causing checkout failures on partner apps",
+    "summary": "Partner merchants report elevated timeout errors during checkout; success rate down 12% in last hour.",
+    "content": "Checkout keeps spinning then fails for card payments on our food app",
+    "user": "partner_foodelivery",
+    "source": "Webhook",
+    "sourceType": "Partner",
+    "type": "Service Incident",
+    "category": "ops",
+    "priority": "P1",
+    "riskLevel": "High",
+    "timestamp": "2026-01-31 11:35",
+    "confidence": 0.91,
+    "aiAnalysis": "Latency spike on payments gateway affecting partner traffic; likely tied to recent deployment.",
+    "risk_scores": {
+      "virality": 22,
+      "churn": 32,
+      "compliance": 10,
+      "financial": 55,
+      "operational": 58
+    },
+    "reverse_prompt": {
+      "situation_background": "Gateway P99 latency doubled after deployment v5.4.2; partners seeing timeouts.",
+      "customer_context": "Food delivery partners mid-lunch rush experiencing failed checkouts.",
+      "evidence_analysis": [
+        "[webhook @ 2026-01-31T11:30:00Z] Timeout on /pay/charge",
+        "[grafana @ 2026-01-31T11:28:00Z] P99 latency 2100ms vs baseline 800ms",
+        "[pager @ 2026-01-31T11:27:00Z] Error budget burn rate 3.4",
+        "[deploy @ 2026-01-31T11:20:00Z] Gateway v5.4.2 rolled to 50%",
+        "[slack @ 2026-01-31T11:25:00Z] Partner #payments channel reporting failures"
+      ],
+      "relevant_policy_excerpts": [
+        "Payments SLO: rollback if P99 >1500ms for 10 minutes during business hours.",
+        "Partner care: broadcast incident notice and workaround within 15 minutes."
+      ],
+      "similar_cases": ["pay_evt_088", "pay_evt_061"],
+      "key_considerations": [
+        "Rollback v5.4.2 and reroute partner traffic to stable pool.",
+        "Notify partners with ETA and temporary retry guidance.",
+        "Monitor auth decline rates post-rollback."
+      ]
+    },
+    "evidence": [
+      { "source": "Grafana", "text": "P99 latency 2100ms", "time": "11:28" },
+      { "source": "Webhook", "text": "Timeout on /pay/charge", "time": "11:30" }
+    ],
+    "status": "Open"
+  },
+  {
+    "id": "CASE-2008",
+    "title": "Social rumor of bank insolvency trending locally",
+    "summary": "Posts on X and WhatsApp claim cash shortages at branches; mentions up 8x in 30 minutes.",
+    "content": "Is Mashreq out of cash? People say ATMs are empty in Deira",
+    "user": "social_watch",
+    "source": "Twitter",
+    "sourceType": "Social Media",
+    "type": "Reputation Risk",
+    "category": "brand",
+    "priority": "P1",
+    "riskLevel": "High",
+    "timestamp": "2026-01-31 11:40",
+    "confidence": 0.86,
+    "aiAnalysis": "Viral misinformation about solvency; needs rapid comms and verification of cash availability.",
+    "risk_scores": {
+      "virality": 78,
+      "churn": 42,
+      "compliance": 18,
+      "financial": 38,
+      "operational": 22
+    },
+    "reverse_prompt": {
+      "situation_background": "Rumor posts cite empty ATMs; monitoring shows normal cash load cycles.",
+      "customer_context": "Local customers concerned about cash access and bank stability.",
+      "evidence_analysis": [
+        "[twitter @ 2026-01-31T11:34:00Z] ATMs empty in Deira? #cashcrunch",
+        "[whatsapp @ 2026-01-31T11:32:00Z] Forwarded voice note claiming insolvency",
+        "[twitter @ 2026-01-31T11:30:00Z] Thread with 2.1k views mentioning cash shortage",
+        "[ops @ 2026-01-31T11:28:00Z] ATM cash load schedule normal; no outages",
+        "[media @ 2026-01-31T11:35:00Z] Journalist asking for comment"
+      ],
+      "relevant_policy_excerpts": [
+        "Crisis Comms: issue clarification within 20 minutes for solvency rumors.",
+        "ATM Ops: publish availability map when >2 rumor clusters detected."
+      ],
+      "similar_cases": ["rep_evt_044", "rep_evt_031"],
+      "key_considerations": [
+        "Prepare official statement and post on owned channels.",
+        "Share live ATM availability for affected area.",
+        "Engage media desk; avoid confirming unverified shortages."
+      ]
+    },
+    "evidence": [
+      { "source": "Twitter", "text": "ATMs empty in Deira? #cashcrunch", "time": "11:34" },
+      { "source": "WhatsApp", "text": "Voice note about insolvency", "time": "11:32" }
+    ],
+    "status": "Unverified"
   }
 ]
