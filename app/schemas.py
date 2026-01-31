@@ -99,3 +99,39 @@ class DashboardCard(BaseModel):
     reverse_prompt: ReversePromptOutput
     guardrails: GuardrailResult
     status: str
+
+
+class CleanDemoCard(BaseModel):
+    """Formatted output for demo display"""
+    event_id: str
+    source: str
+    text: str
+    
+    # Routing
+    assigned_to: str
+    priority: str
+    watchers: List[str]
+    
+    # Risk Scores
+    risk_scores: RiskScores
+    
+    # Signals
+    topic: str
+    sentiment: str
+    urgency: str
+    
+    # Reverse Prompt
+    summary: str
+    goal: str
+    suggested_reply: str
+    questions_to_ask: List[str]
+    checks_to_perform: List[str]
+    do_not_do: List[str]
+    escalate_if: List[str]
+    
+    # Evidence
+    evidence_snippets: List[str]
+    
+    # Status
+    status: str
+    guardrails_passed: bool

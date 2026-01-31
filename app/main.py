@@ -9,7 +9,7 @@ from pydantic import BaseModel
 from .agents.llm_client import warm_start_models
 from .pipeline import process_incident
 from .rag.retrieve import build_indexes, load_events
-from .schemas import DashboardCard, EventRecord, ReversePromptOutput
+from .schemas import CleanDemoCard, DashboardCard, EventRecord, ReversePromptOutput
 
 app = FastAPI(title="Customer Incident Radar", version="0.1.0")
 
@@ -56,16 +56,48 @@ async def list_samples() -> List[EventRecord]:
     return [EventRecord(**event) for event in events]
 
 
-@app.post("/demo/run", response_model=List[DashboardCard])
-async def run_demo(request: DemoRequest) -> List[DashboardCard]:
+@app.post("/demo/run", response_model=List[CleanDemoCard])
+async def run_demo(request: DemoRequest) -> List[CleanDemoCard]:
     events = load_events()
     if not events:
         raise HTTPException(status_code=404, detail="No sample events found.")
     limit = request.limit or 5
-    cards = []
+    
+    clean_cards = []
     for event in events[:limit]:
-        cards.append(process_incident(EventRecord(**event)))
-    return cards
+        card = process_incident(EventRecord(**event))
+        
+        # Format evidence snippets
+        evidence_snippets = [
+            f"[{ev.source} @ {ev.timestamp}] {ev.quote}"
+            for ev in card.signals.evidence
+        ]
+        
+        clean_card = CleanDemoCard(
+            event_id=card.incident.event_id,
+            source=card.incident.source,
+            text=card.incident.text,
+            assigned_to=card.routing.primary_team,
+            priority=card.routing.priority,
+            watchers=card.routing.watchers,
+            risk_scores=card.scores,
+            topic=card.signals.topic,
+            sentiment=card.signals.sentiment,
+            urgency=card.signals.urgency,
+            summary=card.reverse_prompt.employee_prompt.summary,
+            goal=card.reverse_prompt.employee_prompt.goal,
+            suggested_reply=card.reverse_prompt.employee_prompt.suggested_reply,
+            questions_to_ask=card.reverse_prompt.employee_prompt.questions_to_ask,
+            checks_to_perform=card.reverse_prompt.employee_prompt.checks_to_perform,
+            do_not_do=card.reverse_prompt.employee_prompt.do_not_do,
+            escalate_if=card.reverse_prompt.employee_prompt.escalate_if,
+            evidence_snippets=evidence_snippets,
+            status=card.status,
+            guardrails_passed=card.guardrails.passed,
+        )
+        clean_cards.append(clean_card)
+    
+    return clean_cards
 
 
 @app.post("/models/download")
