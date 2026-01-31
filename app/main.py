@@ -121,23 +121,12 @@ def _format_clean_card(card: DashboardCard) -> CleanDemoCard:
     """Format a DashboardCard into clean output format"""
     title = card.signals.summary[:80] + "..." if len(card.signals.summary) > 80 else card.signals.summary
     
-    evidence_snippets = [
-        f"[{ev.source} @ {ev.timestamp}] {ev.quote}"
-        for ev in card.signals.evidence
-    ]
-    
-    policy_refs = card.reverse_prompt.citations.get("playbook_references", [])
-    policy_references = [ref for ref in policy_refs if ref]
-    
     return CleanDemoCard(
         title=title,
         category=card.signals.topic,
         priority=card.routing.priority,
         risk_scores=card.scores,
         reverse_prompt=card.reverse_prompt.employee_prompt,
-        evidence_snippets=evidence_snippets,
-        policy_references=policy_references,
-        similar_cases=card.reverse_prompt.employee_prompt.similar_cases,
     )
 async def download_models() -> dict:
     try:

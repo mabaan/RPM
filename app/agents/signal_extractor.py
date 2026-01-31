@@ -11,9 +11,12 @@ def _heuristic_signals(incident: EventRecord) -> SignalExtraction:
     text = incident.text.lower()
 
     topic = "other"
-    if any(word in text for word in ["bill", "charge", "invoice", "price"]):
+    # Check for bugs/technical issues first (more specific)
+    if any(word in text for word in ["bug", "error", "crash", "broken", "not working", "incorrect", "wrong", "glitch"]):
+        topic = "bug"
+    elif any(word in text for word in ["bill", "charge", "invoice", "price"]) and "bug" not in text and "error" not in text:
         topic = "billing"
-    elif any(word in text for word in ["outage", "down", "offline", "not working", "service unavailable"]):
+    elif any(word in text for word in ["outage", "down", "offline", "service unavailable"]):
         topic = "outage"
     elif any(word in text for word in ["account", "login", "password", "locked"]):
         topic = "account"
@@ -25,7 +28,9 @@ def _heuristic_signals(incident: EventRecord) -> SignalExtraction:
         topic = "service"
 
     intent = "other"
-    if any(word in text for word in ["refund", "chargeback", "money back"]):
+    if any(word in text for word in ["bug", "error", "broken", "crash", "glitch"]):
+        intent = "bug_report"
+    elif any(word in text for word in ["refund", "chargeback", "money back"]):
         intent = "refund_request"
     elif any(word in text for word in ["cancel", "close my account", "leaving"]):
         intent = "cancellation_threat"
@@ -82,9 +87,25 @@ def extract_signals(
     client: ChatClient | None = None,
 ) -> SignalExtraction:
     system_prompt = (
-        "You extract structured signals from customer incidents. "
-        "Return JSON only matching the schema. "
-        "Every true signal must have evidence copied from snippets."
+        "You are an expert analyst extracting structured signals from customer incidents. "
+        "Analyze the incident carefully and classify it correctly:\n"
+        "- 'bug': Software errors, incorrect displays, crashes, glitches, broken features\n"
+        "- 'billing': Payment disputes, charges, invoices (NOT if it's a bug showing wrong amounts)\n"
+        "- 'outage': Service down, offline, unavailable\n"
+        "- 'account': Login, password, access issues\n"
+        "- 'fraud': Scams, unauthorized transactions, stolen data\n"
+        "- 'policy': Policy questions, compliance, legal matters\n"
+        "- 'service': General support requests\n"
+        "\n"
+        "Intent classification:\n"
+        "- 'bug_report': Customer reporting a technical issue or malfunction\n"
+        "- 'legal_threat': Mentions lawyer, lawsuit, regulator\n"
+        "- 'cancellation_threat': Threatening to leave or close account\n"
+        "- 'refund_request': Asking for money back\n"
+        "- 'complaint': General dissatisfaction\n"
+        "- 'information_request': Asking questions\n"
+        "\n"
+        "Return ONLY valid JSON matching the schema."
     )
 
     snippets_text = "\n".join(
@@ -94,19 +115,24 @@ def extract_signals(
     user_prompt = (
         "Incident:\n"
         f"{incident.model_dump()}\n\n"
-        "Event snippets:\n"
+        "Event snippets (historical context):\n"
         f"{snippets_text}\n\n"
         "Global policy excerpt:\n"
         f"{global_policy}\n\n"
-        "Output JSON schema:\n"
-        "{"
-        '"topic":"billing|outage|account|fraud|service|policy|other",'
-        '"intent":"complaint|refund_request|cancellation_threat|legal_threat|information_request|other",'
-        '"sentiment":"positive|neutral|negative",'
-        '"urgency":"low|medium|high",'
-        '"signals":{"virality_threat":true,"repeat_contact":false,"high_reach":false,"compliance_sensitive":false},'
-        '"evidence":[{"source":"sns","timestamp":"2026-01-31T10:05:00Z","quote":"..."}],'
-        '"summary":"One sentence."'
+        "Analyze the incident and return JSON:\n"
+        "{\n"
+        '  "topic": "bug|billing|outage|account|fraud|policy|service|other",\n'
+        '  "intent": "bug_report|complaint|refund_request|cancellation_threat|legal_threat|information_request|other",\n'
+        '  "sentiment": "positive|neutral|negative",\n'
+        '  "urgency": "low|medium|high",\n'
+        '  "signals": {\n'
+        '    "virality_threat": true/false,\n'
+        '    "repeat_contact": true/false,\n'
+        '    "high_reach": true/false,\n'
+        '    "compliance_sensitive": true/false\n'
+        '  },\n'
+        '  "evidence": [{"source": "email", "timestamp": "2026-01-31T10:05:00Z", "quote": "exact quote from incident"}],\n'
+        '  "summary": "One sentence summarizing the issue."\n'
         "}"
     )
 

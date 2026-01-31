@@ -111,10 +111,5 @@ class CleanDemoCard(BaseModel):
     # Metrics
     risk_scores: RiskScores
     
-    # Reverse Prompt - Contextual background for employee
+    # Reverse Prompt - Contains all context (evidence, policies, similar cases, etc.)
     reverse_prompt: ReversePrompt
-    
-    # Supporting evidence and references
-    evidence_snippets: List[str]  # Evidence with sources
-    policy_references: List[str]  # Relevant policies from RAG
-    similar_cases: List[str]  # Similar historical cases
