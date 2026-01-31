@@ -4,12 +4,11 @@ import { LayoutDashboard, FileText, BarChart2, Settings } from 'lucide-react';
 const Sidebar = ({ activeTab, setActiveTab }) => {
     const menuItems = [
         { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard' },
-        { id: 'reports', icon: FileText, label: 'Incidents' },
         { id: 'analytics', icon: BarChart2, label: 'Analytics' },
     ];
 
     return (
-        <div className="fixed right-6 top-1/2 -translate-y-1/2 h-[40vh] w-20 flex flex-col justify-center items-center z-50 pointer-events-none scale-[0.95]">
+        <div className="fixed right-6 top-1/2 -translate-y-1/2 h-[20vh] w-20 flex flex-col justify-center items-center z-50 pointer-events-none scale-[0.95]">
             <div
                 className="relative w-full h-full bg-white/60 backdrop-blur-xl rounded-[3rem] flex flex-col items-center py-6 pointer-events-auto shadow-[0_20px_40px_rgba(0,0,0,0.05)] border border-white/40 transition-all duration-500 hover:scale-[1.02]"
             >
