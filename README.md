@@ -1,4 +1,4 @@
-<h1 align="center"> CounterPrompt: Mashreq </h1>
+<h1 align="center"> ReversePrompt: Mashreq </h1>
 
 A multi-agent AI system that detects customer issues across internal channels and social media, routes incidents to the correct team, and generates a **reverse prompt** that guides employees on what to do next.
 
@@ -9,7 +9,7 @@ No external actions, no commitments, no automated refunds.
 
 ## Architecture overview
 
-**Architecture diagram (10:16 aspect ratio)**
+**Architecture diagram**
 
 
 <div align="center">
