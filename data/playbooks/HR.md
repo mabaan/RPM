@@ -1,26 +1,68 @@
 # HR Playbook
 
-## Employment Regulations
+Version: 1.0
+Owner: HR Lead (demo)
+Applies to: employee conduct concerns tied to customer issues, training gaps, workplace safety, discrimination or harassment allegations
 
-**COUNTRY_LAW_MINIMUM_WAGE**: Federal minimum wage $15.00/hour, state minimum may be higher.
-**COUNTRY_LAW_OVERTIME_THRESHOLD**: Overtime pay (1.5x) required for hours exceeding 40 per week.
-**COUNTRY_LAW_BREAK_REQUIREMENTS**: 30-minute unpaid meal break for shifts over 6 hours.
-**COUNTRY_LAW_PAID_LEAVE**: Minimum 10 days paid leave per year for full-time employees.
-**WHISTLEBLOWER_PROTECTION**: Cannot retaliate against employees reporting violations.
+## 1) Mission
+Ensure fair internal handling of employee related issues, protect privacy, and coordinate with Legal for policy and legal risk.
 
-## Internal Policies
+## 2) Inputs From Dashboard
+- incident summary and evidence quotes
+- whether employee conduct is involved
+- risk indicators (harassment, discrimination, safety)
 
-- Background checks required for all new hires per company policy.
-- Performance reviews conducted quarterly with documented feedback.
-- Discrimination complaints must be investigated within 5 business days.
-- Termination requires documented performance issues and management approval.
-- Employee data access restricted to HR and direct managers only.
+## 3) Core Rules
+- Collect only necessary personal information.
+- Maintain confidentiality and need to know access.
+- Coordinate with Legal for allegations that may carry legal risk.
+- Ensure non discrimination and respectful workplace principles.
 
-## Guidelines
+## 4) HR Triage SOP
+### Step 1: Classify the issue
+- training gap (script issue, misinformation)
+- misconduct (rudeness, policy violation)
+- discrimination or harassment allegation
+- safety concern
 
-- Focus on employee-related issues and internal conduct concerns.
-- Document the report and confirm whether the incident involves policy or legal risk.
-- Avoid collecting unnecessary personal information.
-- If safety or harassment is mentioned, escalate to Legal and Management.
-- **CRITICAL**: Any mention of discrimination, harassment, or hostile work environment requires immediate escalation to Legal.
-- Never discuss individual employee matters with unauthorized personnel.
+### Step 2: Preserve evidence
+- call recordings references
+- chat logs
+- supervisor notes
+- timestamps and ticket ids
+
+### Step 3: Decide handling path
+- coaching and training update (low risk)
+- formal review (medium risk)
+- escalate to Legal + Management (high risk)
+
+### Step 4: Minimum investigation actions
+- interview supervisor and relevant staff
+- review evidence logs
+- document findings and corrective actions
+- ensure fair process and consistency
+
+## 5) Customer Impact Coordination
+If HR action is needed due to customer harm:
+- coordinate with Customer Service for a safe customer message
+- avoid disclosing internal disciplinary actions to customers
+
+## 6) Escalation Triggers
+Escalate to Legal:
+- harassment, discrimination, intimidation, or threats alleged
+- any risk of litigation or regulator involvement
+
+Escalate to Management:
+- repeated systemic training failures causing reputational harm
+- staff misconduct going viral on SNS
+
+## 7) What Not To Do
+- do not request unnecessary sensitive personal data
+- do not share employee private details in incident channels
+- do not promise disciplinary outcomes
+
+## 8) How Agent 3 Should Use This Playbook
+- reverse prompt should include:
+  - documentation checklist
+  - safe language for internal comms
+  - escalation guidance and confidentiality reminders
