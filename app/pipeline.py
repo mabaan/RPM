@@ -5,7 +5,7 @@ from pathlib import Path
 from typing import Optional
 
 from .agents.guardrails_verifier import verify_guardrails
-from .agents.llm_client import LLMClient
+from .agents.llm_client import get_local_client
 from .agents.reverse_prompt import generate_reverse_prompt
 from .agents.signal_extractor import extract_signals
 from .rag.retrieve import retrieve_events, retrieve_playbooks
@@ -27,19 +27,18 @@ def _load_global_policy() -> str:
 _GLOBAL_POLICY = _load_global_policy()
 
 
-def _client_from_env(prefix: str, default_base: str, default_model: str) -> Optional[LLMClient]:
-    api_base = os.getenv(f"{prefix}_API_BASE", default_base)
+def _client_from_env(prefix: str, default_model: str, default_temperature: float, default_max_tokens: int):
     model = os.getenv(f"{prefix}_MODEL", default_model)
-    if not api_base:
-        return None
-    return LLMClient(api_base=api_base, model=model)
+    temperature = float(os.getenv(f"{prefix}_TEMPERATURE", str(default_temperature)))
+    max_tokens = int(os.getenv(f"{prefix}_MAX_TOKENS", str(default_max_tokens)))
+    return get_local_client(model=model, temperature=temperature, max_tokens=max_tokens)
 
 
 def process_incident(incident: EventRecord) -> DashboardCard:
     event_snippets = retrieve_events(incident.text, top_k=6)
     global_policy = _GLOBAL_POLICY
 
-    signal_client = _client_from_env("AGENT1", "http://localhost:8001", "Qwen/Qwen2.5-32B-Instruct")
+    signal_client = _client_from_env("AGENT1", "Qwen/Qwen2.5-32B-Instruct", 0.2, 800)
     signals = extract_signals(incident, event_snippets, global_policy, client=signal_client)
 
     scores = score_risk(signals, incident.metadata)
@@ -47,7 +46,7 @@ def process_incident(incident: EventRecord) -> DashboardCard:
 
     playbook_snippets = retrieve_playbooks(incident.text, team=routing.primary_team, top_k=4)
 
-    reverse_client = _client_from_env("AGENT3", "http://localhost:8002", "Qwen/Qwen2.5-32B-Instruct")
+    reverse_client = _client_from_env("AGENT3", "Qwen/Qwen2.5-32B-Instruct", 0.2, 800)
     reverse_prompt = generate_reverse_prompt(routing, scores, signals, playbook_snippets, client=reverse_client)
 
     temp_card = DashboardCard(
@@ -60,7 +59,7 @@ def process_incident(incident: EventRecord) -> DashboardCard:
         status="pending",
     )
 
-    guard_client = _client_from_env("GUARDRAILS", "http://localhost:8003", "Qwen/Qwen2.5-1.5B-Instruct")
+    guard_client = _client_from_env("GUARDRAILS", "Qwen/Qwen2.5-1.5B-Instruct", 0.1, 400)
     guardrails = verify_guardrails(temp_card, client=guard_client)
 
     status = "ready" if guardrails.passed else "blocked"

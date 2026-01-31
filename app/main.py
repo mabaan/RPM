@@ -5,6 +5,7 @@ from typing import List, Optional
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
 
+from .agents.llm_client import warm_start_models
 from .pipeline import process_incident
 from .rag.retrieve import build_indexes, load_events
 from .schemas import DashboardCard, EventRecord, ReversePromptOutput
@@ -23,6 +24,11 @@ class DemoRequest(BaseModel):
 @app.get("/health")
 async def health() -> dict:
     return {"status": "ok"}
+
+
+@app.on_event("startup")
+async def load_models() -> None:
+    warm_start_models()
 
 
 @app.post("/incidents", response_model=DashboardCard)

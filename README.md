@@ -120,5 +120,11 @@ The API will be available at `http://localhost:8000`.
 
 ## Notes
 
-- Set `MOCK_LLM=false` and configure `AGENT1_API_BASE`, `AGENT3_API_BASE`, and `GUARDRAILS_API_BASE` to connect to vLLM servers.
+- Local LLM inference requires `torch`, `transformers`, and sufficient RAM/VRAM for selected models.
+- Models are loaded in-process on startup. Configure with:
+  - `AGENT1_MODEL`, `AGENT3_MODEL`, `GUARDRAILS_MODEL`
+  - `AGENT1_TEMPERATURE`, `AGENT3_TEMPERATURE`, `GUARDRAILS_TEMPERATURE`
+  - `AGENT1_MAX_TOKENS`, `AGENT3_MAX_TOKENS`, `GUARDRAILS_MAX_TOKENS`
+  - `WARM_START_MODELS=false` to skip preloading
+- `STRICT_LLM=true` (default) will fail if the model returns invalid JSON. Set `STRICT_LLM=false` to allow deterministic fallbacks.
 - Sample data lives in `data/samples` and playbooks in `data/playbooks`.

@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import List, Optional
 
-from .llm_client import LLMClient, try_llm_json
+from .llm_client import ChatClient, try_llm_json
 from ..schemas import DashboardCard, GuardrailResult, TEAM_LIST
 
 
@@ -62,7 +62,7 @@ def _deterministic_checks(card: DashboardCard) -> List[str]:
 
 def verify_guardrails(
     card: DashboardCard,
-    client: Optional[LLMClient] = None,
+    client: Optional[ChatClient] = None,
 ) -> GuardrailResult:
     issues = _deterministic_checks(card)
 

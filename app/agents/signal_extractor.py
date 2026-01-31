@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import os
 from typing import Dict, List
 
-from .llm_client import LLMClient, try_llm_json
+from .llm_client import ChatClient, try_llm_json
 from ..schemas import EvidenceQuote, EventRecord, SignalExtraction, SignalFlags
 
 
@@ -78,7 +79,7 @@ def extract_signals(
     incident: EventRecord,
     event_snippets: List[Dict[str, str]],
     global_policy: str,
-    client: LLMClient | None = None,
+    client: ChatClient | None = None,
 ) -> SignalExtraction:
     system_prompt = (
         "You extract structured signals from customer incidents. "
@@ -115,5 +116,9 @@ def extract_signals(
             return SignalExtraction(**parsed)
         except Exception:
             pass
+
+    strict = os.getenv("STRICT_LLM", "true").lower() in {"1", "true", "yes"}
+    if strict:
+        raise RuntimeError("LLM did not return valid JSON for signal extraction.")
 
     return _heuristic_signals(incident)

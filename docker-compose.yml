@@ -6,10 +6,10 @@ services:
     ports:
       - "8000:8000"
     environment:
-      MOCK_LLM: "true"
       EMBEDDING_MODEL: "BAAI/bge-m3"
-      AGENT1_API_BASE: "http://host.docker.internal:8001"
-      AGENT3_API_BASE: "http://host.docker.internal:8002"
-      GUARDRAILS_API_BASE: "http://host.docker.internal:8003"
+      WARM_START_MODELS: "true"
+      AGENT1_MODEL: "Qwen/Qwen2.5-32B-Instruct"
+      AGENT3_MODEL: "Qwen/Qwen2.5-32B-Instruct"
+      GUARDRAILS_MODEL: "Qwen/Qwen2.5-1.5B-Instruct"
     volumes:
       - ./data:/app/data

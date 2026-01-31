@@ -1,8 +1,9 @@
 from __future__ import annotations
 
+import os
 from typing import Dict, List
 
-from .llm_client import LLMClient, try_llm_json
+from .llm_client import ChatClient, try_llm_json
 from ..schemas import ReversePrompt, ReversePromptOutput, RoutingDecision, SignalExtraction, RiskScores
 
 
@@ -71,7 +72,7 @@ def generate_reverse_prompt(
     scores: RiskScores,
     signals: SignalExtraction,
     playbook_snippets: List[Dict[str, str]],
-    client: LLMClient | None = None,
+    client: ChatClient | None = None,
 ) -> ReversePromptOutput:
     system_prompt = (
         "You create an employee-ready reverse prompt grounded in playbooks and evidence. "
@@ -116,5 +117,9 @@ def generate_reverse_prompt(
             return ReversePromptOutput(**parsed)
         except Exception:
             pass
+
+    strict = os.getenv("STRICT_LLM", "true").lower() in {"1", "true", "yes"}
+    if strict:
+        raise RuntimeError("LLM did not return valid JSON for reverse prompt generation.")
 
     return _deterministic_prompt(routing, scores, signals, playbook_snippets)
