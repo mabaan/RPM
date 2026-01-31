@@ -7,7 +7,7 @@ from pydantic import BaseModel
 
 from .pipeline import process_incident
 from .rag.retrieve import build_indexes, load_events
-from .schemas import DashboardCard, EventRecord
+from .schemas import DashboardCard, EventRecord, ReversePromptOutput
 
 app = FastAPI(title="Customer Incident Radar", version="0.1.0")
 
@@ -28,6 +28,12 @@ async def health() -> dict:
 @app.post("/incidents", response_model=DashboardCard)
 async def create_incident(incident: EventRecord) -> DashboardCard:
     return process_incident(incident)
+
+
+@app.post("/incidents/reverse-prompt", response_model=ReversePromptOutput)
+async def create_reverse_prompt(incident: EventRecord) -> ReversePromptOutput:
+    card = process_incident(incident)
+    return card.reverse_prompt
 
 
 @app.post("/incidents/batch", response_model=List[DashboardCard])

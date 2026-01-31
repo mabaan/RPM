@@ -112,6 +112,7 @@ The API will be available at `http://localhost:8000`.
 
 - `GET /health`
 - `POST /incidents`
+- `POST /incidents/reverse-prompt`
 - `POST /incidents/batch`
 - `GET /samples`
 - `POST /demo/run`
