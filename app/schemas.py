@@ -113,3 +113,39 @@ class CleanDemoCard(BaseModel):
     
     # Reverse Prompt - Contains all context (evidence, policies, similar cases, etc.)
     reverse_prompt: ReversePrompt
+
+
+class IncidentCluster(BaseModel):
+    """Group of related incidents identified in batch analysis"""
+    pattern: str  # Description of the common pattern
+    event_ids: List[str]  # Events in this cluster
+    severity: str  # Low, Medium, High, Critical
+    affected_teams: List[str]  # Teams that need to know
+    common_keywords: List[str]  # Shared terms across incidents
+
+
+class BatchAnalysis(BaseModel):
+    """Collective analysis of multiple incidents"""
+    
+    # Individual incident analyses
+    incidents: List[CleanDemoCard]
+    
+    # Collective insights
+    total_processed: int
+    priority_breakdown: dict  # {"Critical": 2, "High": 5, ...}
+    category_breakdown: dict  # {"billing": 8, "bug": 3, ...}
+    
+    # Pattern detection
+    incident_clusters: List[IncidentCluster]
+    
+    # Aggregate risk assessment
+    aggregate_risks: dict  # Average risk scores across all incidents
+    highest_risk_event_ids: List[str]  # Top 3-5 most concerning events
+    
+    # Systemic issues
+    systemic_patterns: List[str]  # Detected widespread issues
+    policy_violations: List[dict]  # {"event_id": "...", "violation": "..."}
+    
+    # Recommended actions
+    immediate_actions: List[str]  # Urgent steps based on collective analysis
+    team_alerts: dict  # Teams that need immediate notification
