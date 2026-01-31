@@ -10,9 +10,7 @@ This repo follows the implementation guide and keeps the AI pipeline **read-only
 
 **Placeholder for architecture diagram (10:16 aspect ratio)**
 
-Replace `docs/architecture.png` with your image.
-
-![Architecture diagram placeholder (10x16)](docs/architecture.png)
+![Architecture diagram placeholder (10x16)](https://github.com/user-attachments/assets/b655d082-87be-453e-af4b-c387629e9c92)
 
 ### 1) Inputs
 
