@@ -1,0 +1,84 @@
+Mashreq Bounty - Problem 
+Statement 
+Challenge Title: AI for Social Signal Intelligence in Banking 
+Field / Domain: Banking / Responsible AI 
+Problem Statement 
+Overview  
+Banks operate in an environment where public sentiment, misinformation, and service issues 
+can escalate rapidly through social and digital channels. The challenge is not to monitor 
+individuals, but to responsibly interpret public social signals to protect customer trust, brand 
+reputation, and operational resilience. Mashreq is joining this hackathon to explore how 
+responsible AI systems can help banks detect, explain, and respond to such signals with 
+strong governance and human oversight. 
+What Participants Are Required to Do 
+Design an AI system that helps a bank detect, interpret, and responsibly respond to public 
+social signals that may impact brand trust, customer experience, or operational risk, without 
+using real social media data or personal information. 
+This challenge focuses on AI reasoning, system design, explainability, and governance, not 
+on data scraping or model training. 
+Required Scenarios: Each team must demonstrate their solution across at least two of the 
+following: 
+● Brand Sentiment Shift: Detect emerging positive or negative sentiment trends and 
+explain drivers. 
+● Service or Incident Signals: Identify early warning signs of disruption or customer 
+impact. 
+● Fraud or Scam Rumors: Detect public discussions suggesting fraudulent activity. 
+● Misinformation or False Claims: Assess reputational or operational risk from 
+unverified claims. 
+● Executive Insight Briefing: Summarize key signals into a concise leadership 
+briefing. 
+The solution must include: 
+A prototype demonstrating:  
+● Signal detection and aggregation logic 
+● Risk and impact interpretation 
+● Explainable insights (“why this matters”) 
+● Confidence and uncertainty handling 
+● Human escalation and review workflows 
+No automated decision-making or actions are required or expected. 
+Strict Constraints 
+Participants must not: 
+● Use live social media platforms (e.g. X, LinkedIn, Facebook) 
+● Scrape or ingest real posts or feeds 
+● Use personal data or identifiable information 
+● Profile individuals or automate public responses 
+Participants must: 
+● Use synthetic or team-created example posts 
+● Work with aggregated, abstracted social signals 
+● Design with human-in-the-loop controls 
+Responsible AI Requirements 
+● Clear confidence scoring or uncertainty indicators 
+● Explicit non-action boundaries 
+● Human approval checkpoints 
+● Explainability and auditability 
+● Ethical risk considerations 
+Solutions missing these elements cannot be considered for top prizes. 
+Judging Criteria 
+Solutions will be evaluated based on: 
+● Relevance to banking & brand trust 
+● Quality of signal interpretation 
+● Explainability & transparency 
+● Responsible AI & governance design 
+● Usability & clarity of presentation 
+Note: Solutions missing Responsible AI elements (guardrails/human-in-the-loop) cannot be 
+considered for top prizes. 
+Mode of Submission 
+Teams must submit: 
+● GitHub Repo + 2-minute explanation video (used for shortlisting top 5-8 teams). 
+● Live Pitching (approx. 10 mins) for shortlisted teams only. 
+Prizes 
+● 
+ 
+ 
+ 1st Place: AED 4000 + Full team internship interview + Onsite Management 
+meeting. 
+● 
+ 
+ 
+ 2nd Place: AED 2000 + Partial (50%) team internship interview. 
+● 
+ 
+ 
+ 3rd Place: AED 1000 + Partial (25%) team internship interview. 
+Submission Link 
+https://forms.gle/rh5oyGHQVioqFxjJ9 
+(Open only until 3 pm, February 1st 2026)
