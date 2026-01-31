@@ -44,7 +44,8 @@ def process_incident(incident: EventRecord) -> DashboardCard:
     scores = score_risk(signals, incident.metadata)
     routing = route_incident(signals, scores)
 
-    playbook_snippets = retrieve_playbooks(incident.text, team=routing.primary_team, top_k=4)
+    # Retrieve from ALL playbooks without team filtering for comprehensive policy coverage
+    playbook_snippets = retrieve_playbooks(incident.text, team=None, top_k=3)
 
     reverse_client = _client_from_env("AGENT3", "Qwen/Qwen2.5-32B-Instruct", 0.2, 800)
     reverse_prompt = generate_reverse_prompt(routing, scores, signals, playbook_snippets, client=reverse_client)
