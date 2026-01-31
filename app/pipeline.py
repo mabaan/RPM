@@ -44,7 +44,22 @@ def process_incident(incident: EventRecord) -> DashboardCard:
     scores = score_risk(signals, incident.metadata)
     routing = route_incident(signals, scores)
 
-    playbook_snippets = retrieve_playbooks(incident.text, team=routing.primary_team, top_k=4)
+    # Retrieve playbooks from multiple relevant teams for better context
+    relevant_teams = [routing.primary_team]
+    
+    # Add Finance playbook for billing-related issues
+    if signals.topic == "billing" and routing.primary_team != "Finance":
+        relevant_teams.append("Finance")
+    
+    # Add Legal playbook for compliance/legal risks
+    if scores.compliance >= 60 and routing.primary_team != "Legal":
+        relevant_teams.append("Legal")
+    
+    # Retrieve from all relevant teams
+    playbook_snippets = []
+    for team in relevant_teams:
+        team_snippets = retrieve_playbooks(incident.text, team=team, top_k=3)
+        playbook_snippets.extend(team_snippets)
 
     reverse_client = _client_from_env("AGENT3", "Qwen/Qwen2.5-32B-Instruct", 0.2, 800)
     reverse_prompt = generate_reverse_prompt(routing, scores, signals, playbook_snippets, client=reverse_client)
