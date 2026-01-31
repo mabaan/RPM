@@ -11,11 +11,13 @@
   },
   "dependencies": {
     "dagre": "^0.8.5",
+    "d3-geo": "^3.1.1",
     "framer-motion": "^12.29.2",
     "lucide-react": "^0.563.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
-    "reactflow": "^11.11.4"
+    "reactflow": "^11.11.4",
+    "topojson-client": "^3.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.1",

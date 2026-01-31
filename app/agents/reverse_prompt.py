@@ -12,6 +12,7 @@ def _deterministic_prompt(
     scores: RiskScores,
     signals: SignalExtraction,
     playbook_snippets: List[Dict[str, str]],
+    event_snippets: List[Dict[str, str]],
 ) -> ReversePromptOutput:
     primary_team = routing.primary_team
     
@@ -36,18 +37,15 @@ def _deterministic_prompt(
         if text:
             relevant_policy_excerpts.append(text[:300])  # Truncate long policies
     
-    # Check for policy constraint mentions in playbooks
+    # Extract event IDs from similar events retrieved by RAG
     similar_cases = []
-    playbook_text = " ".join([s.get("text", "") for s in playbook_snippets])
-    
-    if "COUNTRY_LAW" in playbook_text or "CRITICAL" in playbook_text:
-        similar_cases.append("Policy constraints detected in playbook - review for potential violations")
-    
-    if scores.compliance >= 60:
-        similar_cases.append("High compliance risk detected - legal review may be required")
+    for event in event_snippets[:5]:
+        event_id = event.get("event_id")
+        if event_id:
+            similar_cases.append(event_id)
     
     if not similar_cases:
-        similar_cases.append("No similar historical patterns identified")
+        similar_cases.append("No similar historical events found")
     
     # Key considerations based on routing and signals
     key_considerations = [
@@ -79,16 +77,26 @@ def generate_reverse_prompt(
     scores: RiskScores,
     signals: SignalExtraction,
     playbook_snippets: List[Dict[str, str]],
+    event_snippets: List[Dict[str, str]],
     client: ChatClient | None = None,
 ) -> ReversePromptOutput:
     system_prompt = (
         "You create contextual background for an employee to understand a customer situation. "
-        "Return JSON only. Provide evidence-based context, not instructions or prescriptive actions. "
-        "Think of it as a system prompt for a human - give them the situation, evidence, and relevant policies."
+        "This is like writing a system prompt for a human - give them the full context they need.\n\n"
+        "CRITICAL ANALYSIS REQUIRED:\n"
+        "1. Check if customer statements reveal POLICY VIOLATIONS (e.g., interest rates exceeding legal caps, fee violations)\n"
+        "2. Compare customer claims against regulatory constraints in playbooks (look for COUNTRY_LAW_, GDPR_, etc.)\n"
+        "3. Highlight any discrepancies between what customer says and what policies allow\n"
+        "4. For bugs/technical issues: assess potential widespread impact and urgency\n\n"
+        "Provide evidence-based context, not prescriptive instructions. "
+        "Return ONLY valid JSON."
     )
 
     playbook_text = "\n".join(item.get("text", "") for item in playbook_snippets)
     evidence_text = "\n".join(f"[{e.source} @ {e.timestamp}] {e.quote}" for e in signals.evidence)
+    
+    # Extract event IDs from similar historical events
+    similar_event_ids = [event.get("event_id", "") for event in event_snippets[:5] if event.get("event_id")]
 
     user_prompt = (
         "Routing decision:\n"
@@ -99,22 +107,24 @@ def generate_reverse_prompt(
         f"{signals.summary}\n\n"
         "Evidence quotes:\n"
         f"{evidence_text}\n\n"
-        "Playbook excerpts:\n"
+        "Playbook excerpts (CHECK FOR REGULATORY CONSTRAINTS):\n"
         f"{playbook_text}\n\n"
-        "Output JSON schema:\n"
-        "{"
-        '"employee_prompt":{'
-        '"situation_background":"...describe the overall situation and routing context...",'
-        '"customer_context":"...what is the customer experiencing and why they contacted us...",'
-        '"evidence_analysis":["...quote with source...", "...another evidence point..."],'
-        '"relevant_policy_excerpts":["...policy guidance from playbooks..."],'
-        '"similar_cases":["...references to similar historical cases..."],'
-        '"key_considerations":["...important context points for the employee..."]'
-        "},"
-        '"citations":{'
-        '"evidence_sources":["source1", "source2"],'
-        '"playbook_references":["playbook1", "playbook2"]'
-        "}"
+        "Similar historical event IDs (from RAG retrieval):\n"
+        f"{', '.join(similar_event_ids) if similar_event_ids else 'None'}\n\n"
+        "Analyze and return JSON:\n"
+        "{\n"
+        '  "employee_prompt": {\n'
+        '    "situation_background": "Describe routing, priority, risk profile, and WHY (cite specific risk factors)",\n'
+        '    "customer_context": "What is the customer experiencing and claiming? Be specific.",\n'
+        '    "evidence_analysis": ["Direct quotes with sources supporting key claims"],\n'
+        '    "relevant_policy_excerpts": ["Key policies/constraints from playbooks - INCLUDE REGULATORY LIMITS"],\n'
+        f'    "similar_cases": {similar_event_ids if similar_event_ids else ["No similar events"]},\n'
+        '    "key_considerations": ["Critical context points - flag violations, compliance risks, escalation triggers"]\n'
+        '  },\n'
+        '  "citations": {\n'
+        '    "evidence_sources": ["source1", "source2"],\n'
+        '    "playbook_references": ["playbook1", "playbook2"]\n'
+        '  }\n'
         "}"
     )
 
@@ -129,4 +139,4 @@ def generate_reverse_prompt(
     if strict:
         raise RuntimeError("LLM did not return valid JSON for reverse prompt generation.")
 
-    return _deterministic_prompt(routing, scores, signals, playbook_snippets)
+    return _deterministic_prompt(routing, scores, signals, playbook_snippets, event_snippets)

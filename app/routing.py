@@ -12,6 +12,9 @@ def route_incident(signals: SignalExtraction, scores: RiskScores) -> RoutingDeci
     if scores.compliance >= 60 or signals.intent == "legal_threat":
         primary = "Legal"
         watchers = ["Management"]
+    elif signals.topic == "bug" or signals.intent == "bug_report":
+        primary = "Development / IT"
+        watchers = ["Product", "Customer Service"]
     elif signals.topic in {"outage", "account"}:
         primary = "Development / IT"
         watchers = ["Customer Service"]

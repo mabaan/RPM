@@ -48,7 +48,7 @@ def process_incident(incident: EventRecord) -> DashboardCard:
     playbook_snippets = retrieve_playbooks(incident.text, team=None, top_k=3)
 
     reverse_client = _client_from_env("AGENT3", "Qwen/Qwen2.5-32B-Instruct", 0.2, 800)
-    reverse_prompt = generate_reverse_prompt(routing, scores, signals, playbook_snippets, client=reverse_client)
+    reverse_prompt = generate_reverse_prompt(routing, scores, signals, playbook_snippets, event_snippets, client=reverse_client)
 
     temp_card = DashboardCard(
         incident=incident,
