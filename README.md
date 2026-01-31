@@ -129,7 +129,8 @@ The API will be available at `http://localhost:8000`.
 
 - Local LLM inference requires `torch`, `transformers`, and sufficient RAM/VRAM for selected models.
 - **Hugging Face Token**: Set `HF_TOKEN` environment variable with your Hugging Face token for accessing gated or private models.
-- **Models are NOT loaded automatically on startup by default**. Call `POST /models/download` endpoint first to download and load models before processing incidents.
+- **Models are NOT loaded automatically**. You must call `POST /models/download` endpoint first to download models before processing incidents.
+- To allow lazy loading (old behavior), set `REQUIRE_MODEL_DOWNLOAD=false` environment variable.
 - To enable automatic model loading on startup, set `AUTO_LOAD_MODELS=true` environment variable.
 - Models can be configured with:
   - `AGENT1_MODEL`, `AGENT3_MODEL`, `GUARDRAILS_MODEL`

@@ -106,6 +106,7 @@ class LocalLLMClient:
 _LOCAL_MODELS: Dict[str, _LocalModel] = {}
 _LOCAL_CLIENTS: Dict[str, LocalLLMClient] = {}
 _LOCAL_LOCK = threading.Lock()
+_MODELS_READY = False
 
 
 class ChatClient(Protocol):
@@ -114,6 +115,13 @@ class ChatClient(Protocol):
 
 
 def get_local_client(model: str, temperature: float = 0.2, max_tokens: int = 800) -> LocalLLMClient:
+    # Check if lazy loading is disabled
+    require_explicit = os.getenv("REQUIRE_MODEL_DOWNLOAD", "true").lower() in {"1", "true", "yes"}
+    if require_explicit and not _MODELS_READY:
+        raise RuntimeError(
+            "Models not loaded. Call POST /models/download endpoint first to download models."
+        )
+    
     key = f"{model}:{temperature}:{max_tokens}"
     with _LOCAL_LOCK:
         if key not in _LOCAL_CLIENTS:
@@ -124,6 +132,8 @@ def get_local_client(model: str, temperature: float = 0.2, max_tokens: int = 800
 
 
 def warm_start_models() -> None:
+    global _MODELS_READY
+    
     if os.getenv("WARM_START_MODELS", "true").lower() not in {"1", "true", "yes"}:
         return
 
@@ -139,9 +149,20 @@ def warm_start_models() -> None:
     agent3_tokens = int(os.getenv("AGENT3_MAX_TOKENS", "800"))
     guard_tokens = int(os.getenv("GUARDRAILS_MAX_TOKENS", "400"))
 
-    get_local_client(agent1_model, temperature=agent1_temp, max_tokens=agent1_tokens)
-    get_local_client(agent3_model, temperature=agent3_temp, max_tokens=agent3_tokens)
-    get_local_client(guard_model, temperature=guard_temp, max_tokens=guard_tokens)
+    # Temporarily disable the require check during warm start
+    old_require = os.environ.get("REQUIRE_MODEL_DOWNLOAD")
+    os.environ["REQUIRE_MODEL_DOWNLOAD"] = "false"
+    
+    try:
+        get_local_client(agent1_model, temperature=agent1_temp, max_tokens=agent1_tokens)
+        get_local_client(agent3_model, temperature=agent3_temp, max_tokens=agent3_tokens)
+        get_local_client(guard_model, temperature=guard_temp, max_tokens=guard_tokens)
+        _MODELS_READY = True
+    finally:
+        if old_require is None:
+            os.environ.pop("REQUIRE_MODEL_DOWNLOAD", None)
+        else:
+            os.environ["REQUIRE_MODEL_DOWNLOAD"] = old_require
 
 
 def extract_json(text: str) -> Optional[Dict[str, Any]]:
