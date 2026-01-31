@@ -31,10 +31,16 @@ def score_risk(signals: SignalExtraction, metadata: Optional[EventMetadata]) -> 
     if signals.intent == "legal_threat" or signals.signals.compliance_sensitive:
         compliance += 70
 
-    if signals.topic in {"outage", "account"}:
-        operational += 35
+    # Technical issues get high operational risk
+    if signals.topic in {"bug", "outage", "account"}:
+        operational += 60
+    
+    # Bug reports affecting financial data get both operational and financial risk
+    if signals.topic == "bug" and any(word in signals.summary.lower() for word in ["balance", "payment", "charge", "bill"]):
+        operational += 20
+        financial += 30
 
-    if signals.topic == "billing":
+    if signals.topic == "billing" and signals.intent != "bug_report":
         financial += 25
     if signals.intent == "refund_request":
         financial += 15
