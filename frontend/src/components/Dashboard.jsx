@@ -1,4 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
+import { geoNaturalEarth1, geoPath, geoGraticule10 } from "d3-geo";
+import { feature } from "topojson-client";
 import {
     Activity,
     Shield,
@@ -21,32 +23,10 @@ const sentimentCountries = [
     { iso: "ARE", name: "UAE", sentiment: 0.55, label: "Positive Momentum" },
 ];
 
-const mapRegions = [
-    {
-        iso: "EGY",
-        name: "Egypt",
-        sentiment: 0.1,
-        label: "Mixed Signals",
-        points: "60,95 92,85 112,105 95,128 62,120",
-        labelPos: { x: 55, y: 78 },
-    },
-    {
-        iso: "PAK",
-        name: "Pakistan",
-        sentiment: -0.35,
-        label: "Rising Concerns",
-        points: "125,62 150,50 175,70 168,112 132,122 108,92",
-        labelPos: { x: 112, y: 46 },
-    },
-    {
-        iso: "ARE",
-        name: "UAE",
-        sentiment: 0.55,
-        label: "Positive Momentum",
-        points: "190,102 220,95 236,112 210,128 186,118",
-        labelPos: { x: 186, y: 90 },
-    },
-];
+const sentimentByIso = sentimentCountries.reduce((acc, country) => {
+    acc[country.iso] = country;
+    return acc;
+}, {});
 
 const getSentimentColor = (value) => {
     if (value === undefined || value === null) return "#E5E7EB";
@@ -61,6 +41,60 @@ const Dashboard = () => {
     const [selectedSignal, setSelectedSignal] = useState(null);
     const [hoveredCountry, setHoveredCountry] = useState(null);
     const [activeCountry, setActiveCountry] = useState(null);
+    const [mapFeatures, setMapFeatures] = useState([]);
+    const [mapError, setMapError] = useState(null);
+
+    useEffect(() => {
+        const focusIsos = new Set(sentimentCountries.map((country) => country.iso));
+        const focusByName = {
+            Pakistan: "PAK",
+            Egypt: "EGY",
+            "United Arab Emirates": "ARE",
+        };
+        const loadMap = async () => {
+            try {
+                const response = await fetch(
+                    "https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json"
+                );
+                if (!response.ok) {
+                    throw new Error("Map data failed to load.");
+                }
+                const topology = await response.json();
+                const geo = feature(topology, topology.objects.countries);
+                const normalized = geo.features.map((item) => {
+                    const nameIso = focusByName[item.properties?.name];
+                    const fallbackIso = item.properties?.name || `ID_${item.id}`;
+                    const iso = item.properties?.ISO_A3 || nameIso || fallbackIso;
+                    return {
+                        ...item,
+                        properties: { ...item.properties, ISO_A3: iso },
+                    };
+                });
+
+                const focus = normalized.filter((item) => focusIsos.has(item.properties.ISO_A3));
+                if (!focus.length) {
+                    throw new Error("No matching countries found in map data.");
+                }
+                setMapFeatures(normalized);
+            } catch (err) {
+                setMapError(err.message || "Unable to load map.");
+            }
+        };
+
+        loadMap();
+    }, []);
+
+    const mapPaths = useMemo(() => {
+        if (!mapFeatures.length) return [];
+        const collection = { type: "FeatureCollection", features: mapFeatures };
+        const projection = geoNaturalEarth1().fitSize([560, 260], collection);
+        const path = geoPath(projection);
+        return mapFeatures.map((item) => ({
+            iso: item.properties.ISO_A3,
+            d: path(item),
+            graticule: path(geoGraticule10()),
+        }));
+    }, [mapFeatures]);
 
     // Function to render source icon
     const getSourceIcon = (source) => {
@@ -278,65 +312,56 @@ const Dashboard = () => {
                                             </div>
 
                                             <div className="relative">
+                                                <div className="absolute inset-0 bg-gradient-to-br from-white/70 via-white/40 to-white/90 rounded-xl"></div>
                                                 <svg
-                                                    className="w-full h-[260px]"
-                                                    viewBox="0 0 300 180"
+                                                    className="w-full h-[260px] relative"
+                                                    viewBox="0 0 560 260"
                                                     role="img"
-                                                    aria-label="Stylized sentiment map for Pakistan, Egypt, and UAE">
-                                                    <defs>
-                                                        <linearGradient id="heat-bg" x1="0" y1="0" x2="1" y2="1">
-                                                            <stop offset="0%" stopColor="#F3F4F6" />
-                                                            <stop offset="100%" stopColor="#FFFFFF" />
-                                                        </linearGradient>
-                                                    </defs>
-                                                    <rect x="0" y="0" width="300" height="180" fill="url(#heat-bg)" />
-                                                    <path
-                                                        d="M20 40 C 60 10, 140 10, 180 40 S 260 70, 290 50"
-                                                        fill="none"
-                                                        stroke="#E5E7EB"
-                                                        strokeWidth="2"
-                                                    />
-                                                    <path
-                                                        d="M10 120 C 70 150, 170 150, 250 120"
-                                                        fill="none"
-                                                        stroke="#F3F4F6"
-                                                        strokeWidth="2"
-                                                    />
-
-                                                    {mapRegions.map((region) => {
-                                                        const isActive = activeCountry?.iso === region.iso;
+                                                    aria-label="Sentiment map for Pakistan, Egypt, and UAE">
+                                                    <rect x="0" y="0" width="560" height="260" fill="transparent" />
+                                                    {mapPaths[0]?.graticule ? (
+                                                        <path
+                                                            d={mapPaths[0].graticule}
+                                                            fill="none"
+                                                            stroke="#E5E7EB"
+                                                            strokeWidth={0.6}
+                                                            opacity={0.9}
+                                                        />
+                                                    ) : null}
+                                                    {mapPaths.map((item) => {
+                                                        const data = sentimentByIso[item.iso];
+                                                        const isActive = activeCountry?.iso === item.iso;
+                                                        const isFocus = Boolean(data);
                                                         return (
-                                                            <g key={region.iso}>
-                                                                <polygon
-                                                                    points={region.points}
-                                                                    fill={getSentimentColor(region.sentiment)}
-                                                                    stroke={isActive ? "#111827" : "#FFFFFF"}
-                                                                    strokeWidth={isActive ? 2 : 1}
-                                                                    onMouseEnter={() => setHoveredCountry(region)}
-                                                                    onMouseLeave={() => setHoveredCountry(null)}
-                                                                    onClick={() => setActiveCountry(region)}
-                                                                    style={{ cursor: "pointer" }}
-                                                                />
-                                                                <circle
-                                                                    cx={region.labelPos.x + 6}
-                                                                    cy={region.labelPos.y + 6}
-                                                                    r="3"
-                                                                    fill="#111827"
-                                                                    opacity="0.6"
-                                                                />
-                                                                <text
-                                                                    x={region.labelPos.x}
-                                                                    y={region.labelPos.y}
-                                                                    fill="#374151"
-                                                                    fontSize="7"
-                                                                    fontWeight="600"
-                                                                    letterSpacing="0.08em">
-                                                                    {region.name.toUpperCase()}
-                                                                </text>
-                                                            </g>
+                                                            <path
+                                                                key={item.iso}
+                                                                d={item.d}
+                                                                fill={isFocus ? getSentimentColor(data?.sentiment) : "#DDF2F8"}
+                                                                stroke={isFocus ? "#FFFFFF" : "#FFFFFF"}
+                                                                strokeWidth={isActive ? 2.2 : 0.8}
+                                                                opacity={isFocus ? 1 : 0.8}
+                                                                onMouseEnter={() => {
+                                                                    if (data) setHoveredCountry(data);
+                                                                }}
+                                                                onMouseLeave={() => setHoveredCountry(null)}
+                                                                onClick={() => {
+                                                                    if (data) setActiveCountry(data);
+                                                                }}
+                                                                style={{ cursor: data ? "pointer" : "default" }}
+                                                            />
                                                         );
                                                     })}
                                                 </svg>
+                                                {!mapPaths.length && !mapError ? (
+                                                    <div className="absolute inset-0 flex items-center justify-center text-xs text-gray-400">
+                                                        Loading map...
+                                                    </div>
+                                                ) : null}
+                                                {mapError ? (
+                                                    <div className="absolute inset-0 flex items-center justify-center text-xs text-red-400">
+                                                        {mapError}
+                                                    </div>
+                                                ) : null}
 
                                                 {hoveredCountry ? (
                                                     <div className="absolute left-4 bottom-4 bg-gray-900 text-white text-[11px] px-3 py-2 rounded-xl shadow-lg">
