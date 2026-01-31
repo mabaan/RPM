@@ -1,0 +1,76 @@
+from __future__ import annotations
+
+import os
+from pathlib import Path
+from typing import Optional
+
+from .agents.guardrails_verifier import verify_guardrails
+from .agents.llm_client import LLMClient
+from .agents.reverse_prompt import generate_reverse_prompt
+from .agents.signal_extractor import extract_signals
+from .rag.retrieve import retrieve_events, retrieve_playbooks
+from .routing import route_incident
+from .scoring import score_risk
+from .schemas import DashboardCard, EventRecord, GuardrailResult
+
+ROOT_DIR = Path(__file__).resolve().parents[1]
+DATA_DIR = (ROOT_DIR / ".." / "data").resolve()
+
+
+def _load_global_policy() -> str:
+    policy_path = (DATA_DIR / "playbooks" / "GlobalPolicy.md").resolve()
+    if policy_path.exists():
+        return policy_path.read_text(encoding="utf-8")
+    return ""
+
+
+_GLOBAL_POLICY = _load_global_policy()
+
+
+def _client_from_env(prefix: str, default_base: str, default_model: str) -> Optional[LLMClient]:
+    api_base = os.getenv(f"{prefix}_API_BASE", default_base)
+    model = os.getenv(f"{prefix}_MODEL", default_model)
+    if not api_base:
+        return None
+    return LLMClient(api_base=api_base, model=model)
+
+
+def process_incident(incident: EventRecord) -> DashboardCard:
+    event_snippets = retrieve_events(incident.text, top_k=6)
+    global_policy = _GLOBAL_POLICY
+
+    signal_client = _client_from_env("AGENT1", "http://localhost:8001", "Qwen/Qwen2.5-32B-Instruct")
+    signals = extract_signals(incident, event_snippets, global_policy, client=signal_client)
+
+    scores = score_risk(signals, incident.metadata)
+    routing = route_incident(signals, scores)
+
+    playbook_snippets = retrieve_playbooks(incident.text, team=routing.primary_team, top_k=4)
+
+    reverse_client = _client_from_env("AGENT3", "http://localhost:8002", "Qwen/Qwen2.5-32B-Instruct")
+    reverse_prompt = generate_reverse_prompt(routing, scores, signals, playbook_snippets, client=reverse_client)
+
+    temp_card = DashboardCard(
+        incident=incident,
+        signals=signals,
+        scores=scores,
+        routing=routing,
+        reverse_prompt=reverse_prompt,
+        guardrails=GuardrailResult(passed=True, issues=[]),
+        status="pending",
+    )
+
+    guard_client = _client_from_env("GUARDRAILS", "http://localhost:8003", "Qwen/Qwen2.5-1.5B-Instruct")
+    guardrails = verify_guardrails(temp_card, client=guard_client)
+
+    status = "ready" if guardrails.passed else "blocked"
+
+    return DashboardCard(
+        incident=incident,
+        signals=signals,
+        scores=scores,
+        routing=routing,
+        reverse_prompt=reverse_prompt,
+        guardrails=guardrails,
+        status=status,
+    )

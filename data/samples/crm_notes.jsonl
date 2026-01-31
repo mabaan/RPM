@@ -1,0 +1,2 @@
+{"event_id":"evt_crm_001","source":"crm","timestamp":"2026-01-31T09:20:00Z","actor_type":"employee","actor_id":"agent_12","thread_id":"th_crm_01","text":"Customer mentioned a regulator complaint about privacy practices.","metadata":{"ticket_id":"T-5001","product":"Privacy"}}
+{"event_id":"evt_crm_002","source":"crm","timestamp":"2026-01-31T12:10:00Z","actor_type":"employee","actor_id":"agent_23","thread_id":"th_crm_02","text":"Multiple repeat contacts about invoice errors for enterprise client.","metadata":{"ticket_id":"T-5002","product":"Billing","repeat_contact":true}}

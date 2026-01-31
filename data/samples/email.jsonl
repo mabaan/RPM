@@ -1,0 +1,2 @@
+{"event_id":"evt_email_001","source":"email","timestamp":"2026-01-31T08:30:00Z","actor_type":"customer","actor_id":"cust_332","thread_id":"th_email_01","text":"I was billed twice for January. Please reverse the extra charge.","metadata":{"ticket_id":"T-3001","product":"Subscription"}}
+{"event_id":"evt_email_002","source":"email","timestamp":"2026-01-31T11:05:00Z","actor_type":"customer","actor_id":"cust_441","thread_id":"th_email_02","text":"If this outage is not fixed today, I will cancel our account.","metadata":{"ticket_id":"T-3002","product":"Platform"}}

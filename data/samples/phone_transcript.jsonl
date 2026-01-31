@@ -1,0 +1,2 @@
+{"event_id":"evt_phone_001","source":"phone","timestamp":"2026-01-31T07:55:00Z","actor_type":"customer","actor_id":"cust_519","thread_id":"th_phone_01","text":"The app is down again. I cannot log in and I need access right away.","metadata":{"ticket_id":"T-4001","product":"App"}}
+{"event_id":"evt_phone_002","source":"phone","timestamp":"2026-01-31T10:40:00Z","actor_type":"customer","actor_id":"cust_877","thread_id":"th_phone_02","text":"I think there is fraud on my account. Someone changed my email.","metadata":{"ticket_id":"T-4002","product":"Account"}}

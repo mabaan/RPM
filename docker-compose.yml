@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      MOCK_LLM: "true"
+      EMBEDDING_MODEL: "BAAI/bge-m3"
+      AGENT1_API_BASE: "http://host.docker.internal:8001"
+      AGENT3_API_BASE: "http://host.docker.internal:8002"
+      GUARDRAILS_API_BASE: "http://host.docker.internal:8003"
+    volumes:
+      - ./data:/app/data
