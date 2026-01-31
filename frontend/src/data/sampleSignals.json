@@ -64,7 +64,7 @@
     "sourceType": "Social Media",
     "type": "Fraud Rumor",
     "category": "fraud",
-    "priority": "P1",
+    "priority": "P0",
     "riskLevel": "High",
     "timestamp": "2026-01-31 10:42",
     "confidence": 0.92,
@@ -202,7 +202,7 @@
     "sourceType": "Direct Feedback",
     "type": "UX Defect",
     "category": "ops",
-    "priority": "P2",
+    "priority": "P3",
     "riskLevel": "Medium",
     "timestamp": "2026-01-31 09:40",
     "confidence": 0.87,
@@ -251,7 +251,7 @@
     "sourceType": "Mobile App",
     "type": "Service Incident",
     "category": "ops",
-    "priority": "P1",
+    "priority": "P0",
     "riskLevel": "High",
     "timestamp": "2026-01-31 11:20",
     "confidence": 0.9,
@@ -273,7 +273,7 @@
         "[monitoring @ 2026-01-31T11:14:00Z] Cardless success rate dropped to 62% in DXB region",
         "[ops @ 2026-01-31T11:12:00Z] Recent config push to ATM switch DXB cluster"
       ],
-        "relevant_policy_excerpts": [
+      "relevant_policy_excerpts": [
         "ATM Ops: roll back switch config if regional success rate <90% for 10 minutes.",
         "Customer Care: offer nearest functioning ATM and fee waiver for retries."
       ],
@@ -299,7 +299,7 @@
     "sourceType": "Partner",
     "type": "Service Incident",
     "category": "ops",
-    "priority": "P1",
+    "priority": "P2",
     "riskLevel": "High",
     "timestamp": "2026-01-31 11:35",
     "confidence": 0.91,
