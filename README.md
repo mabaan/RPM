@@ -106,6 +106,16 @@ uvicorn app.main:app --host 0.0.0.0 --port 8000
 curl -X POST http://localhost:8000/models/download
 ```
 
+5) Process an incident:
+
+```bash
+# By event ID
+curl http://localhost:8000/process/evt_email_001
+
+# Or run demo batch
+curl -X POST http://localhost:8000/process/batch -H "Content-Type: application/json" -d '{"limit": 2}'
+```
+
 ### Option B: Docker Compose
 
 ```bash
@@ -116,14 +126,51 @@ The API will be available at `http://localhost:8000`.
 
 ## API Endpoints
 
-- `GET /health`
-- `POST /models/download` - Download and load AI models before processing
-- `POST /incidents`
-- `POST /incidents/reverse-prompt`
-- `POST /incidents/batch`
-- `GET /samples`
-- `POST /demo/run`
-- `POST /indexes/build`
+### Core Processing
+- `POST /process` - Process a custom incident (send EventRecord JSON)
+- `GET /process/{event_id}` - Process specific event by ID from samples
+- `POST /process/batch` - Process multiple sample incidents (demo mode)
+
+### Utilities
+- `GET /health` - Health check
+- `GET /samples` - List all available sample event IDs
+- `POST /models/download` - Download and load AI models
+- `POST /indexes/build` - Build RAG indexes from playbooks and data
+
+## Example Usage
+
+**Process specific event by ID:**
+```bash
+curl http://localhost:8000/process/evt_email_003
+```
+
+**Process custom incident:**
+```bash
+curl -X POST http://localhost:8000/process \
+  -H "Content-Type: application/json" \
+  -d '{
+    "event_id": "custom_001",
+    "source": "email",
+    "timestamp": "2026-01-31T10:00:00Z",
+    "actor_type": "customer",
+    "actor_id": "cust_123",
+    "thread_id": "thread_001",
+    "text": "Your credit card charges 20% interest - is this legal?",
+    "metadata": {"ticket_id": "T-999", "product": "Credit Card"}
+  }'
+```
+
+**Process multiple samples (demo):**
+```bash
+curl -X POST http://localhost:8000/process/batch \
+  -H "Content-Type: application/json" \
+  -d '{"limit": 3}'
+```
+
+**List available samples:**
+```bash
+curl http://localhost:8000/samples
+```
 
 ## Notes
 
