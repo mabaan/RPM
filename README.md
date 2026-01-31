@@ -100,6 +100,12 @@ python -m app.rag.index_build
 uvicorn app.main:app --host 0.0.0.0 --port 8000
 ```
 
+4) Download models (call this before processing incidents):
+
+```bash
+curl -X POST http://localhost:8000/models/download
+```
+
 ### Option B: Docker Compose
 
 ```bash
@@ -111,6 +117,7 @@ The API will be available at `http://localhost:8000`.
 ## API Endpoints
 
 - `GET /health`
+- `POST /models/download` - Download and load AI models before processing
 - `POST /incidents`
 - `POST /incidents/reverse-prompt`
 - `POST /incidents/batch`
@@ -121,10 +128,13 @@ The API will be available at `http://localhost:8000`.
 ## Notes
 
 - Local LLM inference requires `torch`, `transformers`, and sufficient RAM/VRAM for selected models.
-- Models are loaded in-process on startup. Configure with:
+- **Hugging Face Token**: Set `HF_TOKEN` environment variable with your Hugging Face token for accessing gated or private models.
+- **Models are NOT loaded automatically on startup by default**. Call `POST /models/download` endpoint first to download and load models before processing incidents.
+- To enable automatic model loading on startup, set `AUTO_LOAD_MODELS=true` environment variable.
+- Models can be configured with:
   - `AGENT1_MODEL`, `AGENT3_MODEL`, `GUARDRAILS_MODEL`
   - `AGENT1_TEMPERATURE`, `AGENT3_TEMPERATURE`, `GUARDRAILS_TEMPERATURE`
   - `AGENT1_MAX_TOKENS`, `AGENT3_MAX_TOKENS`, `GUARDRAILS_MAX_TOKENS`
-  - `WARM_START_MODELS=false` to skip preloading
+  - `WARM_START_MODELS=false` to skip model loading when calling `/models/download`
 - `STRICT_LLM=true` (default) will fail if the model returns invalid JSON. Set `STRICT_LLM=false` to allow deterministic fallbacks.
 - Sample data lives in `data/samples` and playbooks in `data/playbooks`.

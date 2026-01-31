@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import List, Optional
 
 from fastapi import FastAPI, HTTPException
@@ -28,7 +29,9 @@ async def health() -> dict:
 
 @app.on_event("startup")
 async def load_models() -> None:
-    warm_start_models()
+    auto_load = os.getenv("AUTO_LOAD_MODELS", "false").lower() in {"1", "true", "yes"}
+    if auto_load:
+        warm_start_models()
 
 
 @app.post("/incidents", response_model=DashboardCard)
@@ -63,6 +66,15 @@ async def run_demo(request: DemoRequest) -> List[DashboardCard]:
     for event in events[:limit]:
         cards.append(process_incident(EventRecord(**event)))
     return cards
+
+
+@app.post("/models/download")
+async def download_models() -> dict:
+    try:
+        warm_start_models()
+        return {"status": "success", "message": "Models downloaded and loaded successfully"}
+    except Exception as exc:
+        raise HTTPException(status_code=500, detail=str(exc)) from exc
 
 
 @app.post("/indexes/build")

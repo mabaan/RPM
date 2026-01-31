@@ -54,7 +54,10 @@ class _LocalModel:
                 "Local LLM dependencies not available. Install torch and transformers to use local models."
             )
 
-        self._tokenizer = AutoTokenizer.from_pretrained(model, trust_remote_code=True)
+        hf_token = os.getenv("HF_TOKEN")
+        self._tokenizer = AutoTokenizer.from_pretrained(
+            model, trust_remote_code=True, token=hf_token
+        )
         if self._tokenizer.pad_token_id is None and self._tokenizer.eos_token_id is not None:
             self._tokenizer.pad_token_id = self._tokenizer.eos_token_id
         self._model = AutoModelForCausalLM.from_pretrained(
@@ -62,6 +65,7 @@ class _LocalModel:
             torch_dtype="auto",
             device_map="auto",
             trust_remote_code=True,
+            token=hf_token,
         )
         self._model.eval()
 
