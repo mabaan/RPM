@@ -64,24 +64,44 @@ def verify_guardrails(
     card: DashboardCard,
     client: Optional[ChatClient] = None,
 ) -> GuardrailResult:
-    issues = _deterministic_checks(card)
+    issues = []
 
-    if client:
-        prompt = (
-            "Validate this dashboard card for safety, evidence, and policy. "
-            "Return JSON only: {\"pass\": true/false, \"issues\": [..]}. "
-            "Fail if any suggestion implies taking action outside read-only scope, "
-            "if claims lack evidence, or if language is overly certain for legal/marketing."
-        )
-        parsed = try_llm_json(
-            client,
-            [
-                {"role": "system", "content": prompt},
-                {"role": "user", "content": card.model_dump_json()},
-            ],
-        )
-        if parsed:
-            if not parsed.get("pass", True):
-                issues.extend(parsed.get("issues", []))
+    if not client:
+        return GuardrailResult(passed=False, issues=["LLM client not available for guardrails validation"])
 
+    system_prompt = (
+        "You are a safety and compliance validator for AI-generated content. "
+        "Validate this dashboard card for:\n"
+        "1. Evidence grounding - all claims must have supporting evidence with sources\n"
+        "2. Policy alignment - recommendations must align with provided playbooks\n"
+        "3. Privacy and safety - no PII exposure, no harmful content\n"
+        "4. Ethical boundaries - no promises, guarantees, or fault admissions\n"
+        "5. Explainability - citations and references must be present\n"
+        "\n"
+        "Return JSON only: {\"pass\": true/false, \"issues\": [\"issue1\", \"issue2\", ...]}. "
+        "Set pass=false if ANY validation fails. "
+        "Be strict about evidence citations and policy alignment."
+    )
+    
+    parsed = try_llm_json(
+        client,
+        [
+            {"role": "system", "content": system_prompt},
+            {"role": "user", "content": card.model_dump_json()},
+        ],
+    )
+    
+    if not parsed:
+        return GuardrailResult(passed=False, issues=["Guardrails LLM failed to return valid response"])
+    
+    passed = parsed.get("pass", False)
+    llm_issues = parsed.get("issues", [])
+    
+    if not passed:
+        issues.extend(llm_issues)
+    
+    # Require citations check (minimal deterministic fallback)
+    if not card.reverse_prompt.citations:
+        issues.append("Missing citations in reverse prompt output")
+    
     return GuardrailResult(passed=len(issues) == 0, issues=issues)

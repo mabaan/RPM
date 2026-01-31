@@ -72,13 +72,12 @@ class RoutingDecision(BaseModel):
 
 
 class ReversePrompt(BaseModel):
-    summary: str
-    goal: str
-    suggested_reply: str
-    questions_to_ask: List[str]
-    checks_to_perform: List[str]
-    do_not_do: List[str]
-    escalate_if: List[str]
+    situation_background: str
+    customer_context: str
+    evidence_analysis: List[str]
+    relevant_policy_excerpts: List[str]
+    similar_cases: List[str]
+    key_considerations: List[str]
 
 
 class ReversePromptOutput(BaseModel):
@@ -120,17 +119,13 @@ class CleanDemoCard(BaseModel):
     sentiment: str
     urgency: str
     
-    # Reverse Prompt
-    summary: str
-    goal: str
-    suggested_reply: str
-    questions_to_ask: List[str]
-    checks_to_perform: List[str]
-    do_not_do: List[str]
-    escalate_if: List[str]
-    
-    # Evidence
-    evidence_snippets: List[str]
+    # Reverse Prompt - Context for Employee
+    situation_background: str
+    customer_context: str
+    evidence_analysis: List[str]
+    relevant_policy_excerpts: List[str]
+    similar_cases: List[str]
+    key_considerations: List[str]
     
     # Status
     status: str

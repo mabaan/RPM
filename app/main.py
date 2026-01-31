@@ -67,12 +67,6 @@ async def run_demo(request: DemoRequest) -> List[CleanDemoCard]:
     for event in events[:limit]:
         card = process_incident(EventRecord(**event))
         
-        # Format evidence snippets
-        evidence_snippets = [
-            f"[{ev.source} @ {ev.timestamp}] {ev.quote}"
-            for ev in card.signals.evidence
-        ]
-        
         clean_card = CleanDemoCard(
             event_id=card.incident.event_id,
             source=card.incident.source,
@@ -84,14 +78,12 @@ async def run_demo(request: DemoRequest) -> List[CleanDemoCard]:
             topic=card.signals.topic,
             sentiment=card.signals.sentiment,
             urgency=card.signals.urgency,
-            summary=card.reverse_prompt.employee_prompt.summary,
-            goal=card.reverse_prompt.employee_prompt.goal,
-            suggested_reply=card.reverse_prompt.employee_prompt.suggested_reply,
-            questions_to_ask=card.reverse_prompt.employee_prompt.questions_to_ask,
-            checks_to_perform=card.reverse_prompt.employee_prompt.checks_to_perform,
-            do_not_do=card.reverse_prompt.employee_prompt.do_not_do,
-            escalate_if=card.reverse_prompt.employee_prompt.escalate_if,
-            evidence_snippets=evidence_snippets,
+            situation_background=card.reverse_prompt.employee_prompt.situation_background,
+            customer_context=card.reverse_prompt.employee_prompt.customer_context,
+            evidence_analysis=card.reverse_prompt.employee_prompt.evidence_analysis,
+            relevant_policy_excerpts=card.reverse_prompt.employee_prompt.relevant_policy_excerpts,
+            similar_cases=card.reverse_prompt.employee_prompt.similar_cases,
+            key_considerations=card.reverse_prompt.employee_prompt.key_considerations,
             status=card.status,
             guardrails_passed=card.guardrails.passed,
         )

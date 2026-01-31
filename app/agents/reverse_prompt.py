@@ -14,55 +14,52 @@ def _deterministic_prompt(
     playbook_snippets: List[Dict[str, str]],
 ) -> ReversePromptOutput:
     primary_team = routing.primary_team
-    playbook_point = playbook_snippets[0]["text"] if playbook_snippets else "Follow standard playbook guidance."
-    evidence_quote = signals.evidence[0].quote if signals.evidence else ""
-
-    summary = f"Route to {primary_team} with priority {routing.priority}. {signals.summary}"
-    goal = "Provide a safe, empathetic response and gather the minimum information needed to resolve the issue."
-    suggested_reply = (
-        "Thanks for bringing this to our attention. I can help with this and will review the details "
-        "from your report. To make sure we address it correctly, could you confirm the relevant account "
-        "details and timeline?"
+    
+    # Build contextual background
+    situation_background = (
+        f"This {signals.topic} case has been routed to {primary_team} with {routing.priority} priority. "
+        f"Customer sentiment appears {signals.sentiment} with {signals.urgency} urgency. "
+        f"Risk profile: virality={scores.virality}, churn={scores.churn}, compliance={scores.compliance}."
     )
-
-    questions = [
-        "Which account or order is affected?",
-        "When did this start and what have you already tried?",
-        "Is there any error message or reference ID?",
+    
+    customer_context = signals.summary
+    
+    # Extract evidence with references
+    evidence_analysis = []
+    for ev in signals.evidence:
+        evidence_analysis.append(f"[{ev.source} @ {ev.timestamp}] {ev.quote}")
+    
+    # Policy excerpts from RAG
+    relevant_policy_excerpts = []
+    for snippet in playbook_snippets[:3]:
+        relevant_policy_excerpts.append(snippet.get("text", ""))
+    
+    # Similar cases would come from event retrieval
+    similar_cases = [
+        "See event history for patterns related to this topic"
     ]
-
-    checks = [
-        "Review recent account activity and internal incident logs.",
-        "Validate against current policies before making any commitments.",
+    
+    # Key considerations based on routing and signals
+    key_considerations = [
+        f"Case routed to {primary_team} based on {signals.topic} topic",
+        f"Priority set to {routing.priority} due to risk factors",
+        f"Watchers: {', '.join(routing.watchers) if routing.watchers else 'None'}",
     ]
-
-    do_not_do = [
-        "Do not promise refunds or specific outcomes.",
-        "Do not admit fault or speculate on root cause.",
-        "Do not request or expose sensitive personal data.",
-    ]
-
-    escalate_if = [
-        "Legal or compliance threats are mentioned.",
-        "Multiple customers report the same issue in a short time.",
-        "The incident becomes public and high reach.",
-    ]
-
+    
     prompt = ReversePrompt(
-        summary=summary,
-        goal=goal,
-        suggested_reply=suggested_reply,
-        questions_to_ask=questions,
-        checks_to_perform=checks,
-        do_not_do=do_not_do,
-        escalate_if=escalate_if,
+        situation_background=situation_background,
+        customer_context=customer_context,
+        evidence_analysis=evidence_analysis,
+        relevant_policy_excerpts=relevant_policy_excerpts,
+        similar_cases=similar_cases,
+        key_considerations=key_considerations,
     )
-
+    
     return ReversePromptOutput(
         employee_prompt=prompt,
         citations={
-            "evidence_quotes_used": [evidence_quote],
-            "playbook_points_used": [playbook_point],
+            "evidence_sources": [ev.source for ev in signals.evidence],
+            "playbook_references": [s.get("source", "") for s in playbook_snippets],
         },
     )
 
@@ -75,12 +72,13 @@ def generate_reverse_prompt(
     client: ChatClient | None = None,
 ) -> ReversePromptOutput:
     system_prompt = (
-        "You create an employee-ready reverse prompt grounded in playbooks and evidence. "
-        "Return JSON only. No promises, no admissions of fault, advisory only."
+        "You create contextual background for an employee to understand a customer situation. "
+        "Return JSON only. Provide evidence-based context, not instructions or prescriptive actions. "
+        "Think of it as a system prompt for a human - give them the situation, evidence, and relevant policies."
     )
 
     playbook_text = "\n".join(item.get("text", "") for item in playbook_snippets)
-    evidence_text = "\n".join(f"{e.source}: {e.quote}" for e in signals.evidence)
+    evidence_text = "\n".join(f"[{e.source} @ {e.timestamp}] {e.quote}" for e in signals.evidence)
 
     user_prompt = (
         "Routing decision:\n"
@@ -96,17 +94,16 @@ def generate_reverse_prompt(
         "Output JSON schema:\n"
         "{"
         '"employee_prompt":{'
-        '"summary":"...",'
-        '"goal":"...",'
-        '"suggested_reply":"...",'
-        '"questions_to_ask":["..."],'
-        '"checks_to_perform":["..."],'
-        '"do_not_do":["..."],'
-        '"escalate_if":["..."]'
+        '"situation_background":"...describe the overall situation and routing context...",'
+        '"customer_context":"...what is the customer experiencing and why they contacted us...",'
+        '"evidence_analysis":["...quote with source...", "...another evidence point..."],'
+        '"relevant_policy_excerpts":["...policy guidance from playbooks..."],'
+        '"similar_cases":["...references to similar historical cases..."],'
+        '"key_considerations":["...important context points for the employee..."]'
         "},"
         '"citations":{'
-        '"evidence_quotes_used":["..."],'
-        '"playbook_points_used":["..."]'
+        '"evidence_sources":["source1", "source2"],'
+        '"playbook_references":["playbook1", "playbook2"]'
         "}"
         "}"
     )
