@@ -1,6 +1,15 @@
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useEffect } from "react";
 import { Search, ArrowDownUp, AlertTriangle, Info, CheckCircle, Clock, Mail, MessageSquare, Activity, FileText } from "lucide-react";
 import sampleSignals from "../data/sampleSignals.json";
+import {
+    parseTimestamp,
+    formatShortDate,
+    getTopicLabel,
+    getTeamLabel,
+    getChannelLabel,
+    computeViralityScore,
+    getViralityBucket,
+} from "../utils/riskRadar";
 
 const priorityOrder = ["P0", "P1", "P2", "P3"];
 const priorityPalette = {
@@ -8,26 +17,6 @@ const priorityPalette = {
     P1: "#F57C00",
     P2: "#FBC02D",
     P3: "#388E3C",
-};
-
-const parseTimestamp = (value) => {
-    if (!value) return null;
-    const normalized = String(value).trim().replace(" ", "T") + "Z";
-    const date = new Date(normalized);
-    return isNaN(date.getTime()) ? null : date;
-};
-
-const formatShortDate = (value) => {
-    const date = parseTimestamp(value);
-    if (!date) return value || "-";
-    return new Intl.DateTimeFormat("en-GB", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-        hour: "2-digit",
-        minute: "2-digit",
-        hour12: false,
-    }).format(date);
 };
 
 const riskBadge = {
@@ -43,12 +32,49 @@ const getSourceIcon = (source) => {
     return FileText;
 };
 
-const Reports = () => {
+const Reports = ({ initialFilters }) => {
     const [searchTerm, setSearchTerm] = useState("");
     const [priorityFilter, setPriorityFilter] = useState("All");
     const [categoryFilter, setCategoryFilter] = useState("All");
     const [statusFilter, setStatusFilter] = useState("All");
     const [sortBy, setSortBy] = useState("Latest");
+    const [topicFilter, setTopicFilter] = useState("All");
+    const [teamFilter, setTeamFilter] = useState("All");
+    const [channelFilter, setChannelFilter] = useState("All");
+    const [riskBucketFilter, setRiskBucketFilter] = useState("All");
+    const [riskLevelFilter, setRiskLevelFilter] = useState("All");
+    const [complianceRiskFilter, setComplianceRiskFilter] = useState("All");
+
+    useEffect(() => {
+        if (!initialFilters) return;
+        if (initialFilters.reset) {
+            setSearchTerm("");
+            setPriorityFilter("All");
+            setCategoryFilter("All");
+            setStatusFilter("All");
+            setSortBy("Latest");
+            setTopicFilter("All");
+            setTeamFilter("All");
+            setChannelFilter("All");
+            setRiskBucketFilter("All");
+            setRiskLevelFilter("All");
+            setComplianceRiskFilter("All");
+            return;
+        }
+        if (initialFilters.searchTerm !== undefined) setSearchTerm(initialFilters.searchTerm);
+        if (initialFilters.priority !== undefined) setPriorityFilter(initialFilters.priority);
+        if (initialFilters.category !== undefined) setCategoryFilter(initialFilters.category);
+        if (initialFilters.status !== undefined) setStatusFilter(initialFilters.status);
+        if (initialFilters.sortBy !== undefined) setSortBy(initialFilters.sortBy);
+        if (initialFilters.topic !== undefined) setTopicFilter(initialFilters.topic);
+        if (initialFilters.team !== undefined) setTeamFilter(initialFilters.team);
+        if (initialFilters.channel !== undefined) setChannelFilter(initialFilters.channel);
+        if (initialFilters.riskBucket !== undefined) setRiskBucketFilter(initialFilters.riskBucket);
+        if (initialFilters.riskLevel !== undefined) setRiskLevelFilter(initialFilters.riskLevel);
+        if (initialFilters.complianceRisk !== undefined) {
+            setComplianceRiskFilter(initialFilters.complianceRisk ? "High" : "All");
+        }
+    }, [initialFilters]);
 
     const categories = useMemo(() => {
         const set = new Set(sampleSignals.map((item) => item.category || "uncategorized"));
@@ -71,7 +97,26 @@ const Reports = () => {
             const matchesPriority = priorityFilter === "All" || item.priority === priorityFilter;
             const matchesCategory = categoryFilter === "All" || item.category === categoryFilter;
             const matchesStatus = statusFilter === "All" || (item.status || "Open") === statusFilter;
-            return matchesTerm && matchesPriority && matchesCategory && matchesStatus;
+            const matchesTopic = topicFilter === "All" || getTopicLabel(item) === topicFilter;
+            const matchesTeam = teamFilter === "All" || getTeamLabel(item) === teamFilter;
+            const matchesChannel = channelFilter === "All" || getChannelLabel(item) === channelFilter;
+            const matchesRiskBucket =
+                riskBucketFilter === "All" || getViralityBucket(computeViralityScore(item)) === riskBucketFilter;
+            const matchesRiskLevel = riskLevelFilter === "All" || (item.riskLevel || "Low") === riskLevelFilter;
+            const matchesCompliance =
+                complianceRiskFilter === "All" || ((item.risk_scores?.compliance || 0) >= 60);
+            return (
+                matchesTerm &&
+                matchesPriority &&
+                matchesCategory &&
+                matchesStatus &&
+                matchesTopic &&
+                matchesTeam &&
+                matchesChannel &&
+                matchesRiskBucket &&
+                matchesRiskLevel &&
+                matchesCompliance
+            );
         });
 
         if (sortBy === "Latest") {
@@ -82,10 +127,24 @@ const Reports = () => {
             );
         } else if (sortBy === "Confidence") {
             list = [...list].sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
+        } else if (sortBy === "Oldest") {
+            list = [...list].sort((a, b) => (parseTimestamp(a.timestamp)?.getTime() || 0) - (parseTimestamp(b.timestamp)?.getTime() || 0));
         }
 
         return list;
-    }, [searchTerm, priorityFilter, categoryFilter, statusFilter, sortBy]);
+    }, [
+        searchTerm,
+        priorityFilter,
+        categoryFilter,
+        statusFilter,
+        sortBy,
+        topicFilter,
+        teamFilter,
+        channelFilter,
+        riskBucketFilter,
+        riskLevelFilter,
+        complianceRiskFilter,
+    ]);
 
     return (
         <div className="h-full flex flex-col animate-fade-in" style={{ paddingBottom: "40px" }}>
@@ -215,6 +274,7 @@ const Reports = () => {
                                     <option value="Latest">Latest</option>
                                     <option value="Priority">Priority</option>
                                     <option value="Confidence">Confidence</option>
+                                    <option value="Oldest">Oldest</option>
                                 </select>
                             </div>
                         </div>

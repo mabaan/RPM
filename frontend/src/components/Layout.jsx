@@ -2,12 +2,14 @@ import React, { useState, useEffect } from 'react';
 import Sidebar from './Sidebar';
 import Dashboard from './Dashboard';
 import Reports from './Reports';
+import RiskRadar from './RiskRadar';
 import RootCause from './RootCause/RootCause';
-import Settings from './Settings';
 
 const Layout = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
     const [nowText, setNowText] = useState('');
+    const [reportFilters, setReportFilters] = useState(null);
+    const [dashboardSignalId, setDashboardSignalId] = useState(null);
 
     const toOrdinal = (day) => {
         const d = Number(day);
@@ -45,6 +47,29 @@ const Layout = () => {
         return () => clearInterval(id);
     }, []);
 
+    const handleNavigate = (tab, filters) => {
+        setActiveTab(tab);
+        if (tab === 'reports') {
+            if (filters) {
+                setReportFilters({ ...filters, _stamp: Date.now() });
+            } else {
+                setReportFilters({ reset: true, _stamp: Date.now() });
+            }
+        }
+    };
+
+    const handleSidebarTab = (tab) => {
+        setActiveTab(tab);
+        if (tab === 'dashboard') {
+            setDashboardSignalId(null);
+        }
+    };
+
+    const handleOpenSignal = (signalId) => {
+        setDashboardSignalId(signalId);
+        setActiveTab('dashboard');
+    };
+
     return (
         <div className="relative w-full h-screen overflow-hidden text-gray-900 selection:bg-orange-500/30 font-sans bg-[#F9F7F2]">
 
@@ -66,7 +91,41 @@ const Layout = () => {
                         <div className="flex items-center gap-3">
                             <img src="/mashreq-logo.png" alt="Mashreq" className="h-10 object-contain drop-shadow-sm" />
                             <div className="h-4 w-[2px] bg-black/10"></div>
-                            <span className="text-sm tracking-[1em] text-mashreq-orange uppercase">REVERSE PROMPT INTERFACE</span>
+                            <div
+                                style={{
+                                    display: "inline-flex",
+                                    alignItems: "center",
+                                    gap: "8px",
+                                    padding: "6px 12px",
+                                    borderRadius: "999px",
+                                    background: "rgba(255,255,255,0.7)",
+                                    border: "1px solid rgba(251,146,60,0.35)",
+                                    boxShadow: "0 6px 14px rgba(249,115,22,0.12)",
+                                }}>
+                                <span
+                                    style={{
+                                        fontSize: "11px",
+                                        fontWeight: 800,
+                                        letterSpacing: "0.22em",
+                                        textTransform: "uppercase",
+                                        color: "#f97316",
+                                    }}>
+                                    Reverse Prompt
+                                </span>
+                                <span
+                                    style={{
+                                        fontSize: "10px",
+                                        fontWeight: 800,
+                                        letterSpacing: "0.18em",
+                                        textTransform: "uppercase",
+                                        color: "#0f172a",
+                                        background: "rgba(251,146,60,0.15)",
+                                        padding: "4px 10px",
+                                        borderRadius: "999px",
+                                    }}>
+                                    Interface
+                                </span>
+                            </div>
                         </div>
                         <h1 className="text-4xl font-bold tracking-tight text-gray-900">
 
@@ -82,16 +141,16 @@ const Layout = () => {
 
                 {/* Dynamic Content */}
                 <main className="flex-1 overflow-y-auto pr-2 scrollbar-hide pb-10">
-                    {activeTab === 'dashboard' && <Dashboard onNavigate={setActiveTab} />}
-                    {activeTab === 'reports' && <Reports type={activeTab} />}
+                    {activeTab === 'dashboard' && <Dashboard onNavigate={handleNavigate} selectedSignalId={dashboardSignalId} />}
+                    {activeTab === 'reports' && <Reports initialFilters={reportFilters} />}
+                    {activeTab === 'risk' && <RiskRadar onNavigate={handleNavigate} onOpenSignal={handleOpenSignal} />}
                     {activeTab === 'analytics' && <RootCause />}
-                    {activeTab === 'settings' && <Settings />}
                 </main>
 
             </div>
 
             {/* Right Sidebar - Now Floating */}
-            <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
+            <Sidebar activeTab={activeTab} setActiveTab={handleSidebarTab} />
 
         </div>
     );

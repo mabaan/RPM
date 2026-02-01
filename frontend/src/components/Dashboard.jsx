@@ -52,7 +52,7 @@ const getSourceIcon = (source) => {
     return <FileText size={14} />;
 };
 
-const Dashboard = ({ onNavigate }) => {
+const Dashboard = ({ onNavigate, selectedSignalId }) => {
     const [selectedSignal, setSelectedSignal] = useState(null);
     const [hoveredCountry, setHoveredCountry] = useState(null);
     const [activeCountry, setActiveCountry] = useState(null);
@@ -68,6 +68,14 @@ const Dashboard = ({ onNavigate }) => {
         }
         return () => document.body.classList.remove(cls);
     }, [selectedSignal]);
+
+    useEffect(() => {
+        if (!selectedSignalId) return;
+        const found = sampleSignals.find((signal) => signal.id === selectedSignalId);
+        if (found) {
+            setSelectedSignal(found);
+        }
+    }, [selectedSignalId]);
 
     useEffect(() => {
         const focusIsos = new Set(sentimentCountries.map((country) => country.iso));

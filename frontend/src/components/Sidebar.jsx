@@ -1,12 +1,12 @@
 import React from 'react';
-import { LayoutDashboard, FileText, BarChart2, Settings } from 'lucide-react';
+import { LayoutDashboard, FileText, BarChart2, ShieldAlert } from 'lucide-react';
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
     const menuItems = [
         { id: 'dashboard', icon: LayoutDashboard, label: 'Dashboard', meta: 'Live signals' },
         { id: 'reports', icon: FileText, label: 'Reports', meta: 'Case library' },
         { id: 'analytics', icon: BarChart2, label: 'Analytics', meta: 'Root cause' },
-        { id: 'settings', icon: Settings, label: 'Settings', meta: 'Workspace' },
+        { id: 'risk', icon: ShieldAlert, label: 'Risk Radar', meta: 'Early warning' },
     ];
 
     return (
@@ -90,15 +90,6 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
                                     <div style={{ fontSize: '13px', fontWeight: 700, color: '#0f172a' }}>{item.label}</div>
                                     <div style={{ fontSize: '11px', color: '#94a3b8', marginTop: '2px' }}>{item.meta}</div>
                                 </div>
-                                <div
-                                    style={{
-                                        position: 'absolute',
-                                        right: '-6px',
-                                        width: '6px',
-                                        height: '6px',
-                                        borderRadius: '999px',
-                                        background: isActive ? '#f97316' : 'transparent',
-                                    }}></div>
                             </button>
                         );
                     })}
