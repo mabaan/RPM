@@ -4,6 +4,7 @@ import os
 from typing import List, Optional
 
 from fastapi import FastAPI, HTTPException, Path
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from .agents.llm_client import warm_start_models
@@ -13,6 +14,15 @@ from .schemas import CleanDemoCard, DashboardCard, EventRecord
 
 app = FastAPI(title="Customer Incident Radar", version="0.1.0")
 
+# Add CORS middleware to allow frontend connections
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # Allow all origins (you can restrict to specific domains)
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 class ProcessRequest(BaseModel):
     limit: Optional[int] = 5
@@ -21,7 +31,32 @@ class ProcessRequest(BaseModel):
 @app.get("/health")
 async def health() -> dict:
     """Health check endpoint"""
-    return {"status": "ok"}
+    return {"status": "ok", "message": "API is running"}
+
+
+@app.get("/test")
+async def test() -> dict:
+    """Test endpoint with sample data"""
+    return {
+        "title": "Test Incident",
+        "category": "billing",
+        "priority": "High",
+        "risk_scores": {
+            "virality": 30,
+            "churn": 50,
+            "compliance": 70,
+            "financial": 60,
+            "operational": 40
+        },
+        "reverse_prompt": {
+            "situation_background": "This is a test incident from the API",
+            "customer_context": "Test customer context",
+            "evidence_analysis": ["Test evidence 1", "Test evidence 2"],
+            "relevant_policy_excerpts": ["Test policy 1", "Test policy 2"],
+            "similar_cases": ["evt_001", "evt_002"],
+            "key_considerations": ["Test consideration 1", "Test consideration 2"]
+        }
+    }
 
 
 @app.on_event("startup")
