@@ -7,10 +7,14 @@ const palette = {
     Low: { border: "1px solid #DCFCE7", badgeBg: "#DCFCE7", badgeText: "#15803D", icon: <CheckCircle size={14} className="text-green-500" /> },
 };
 
-const IncomingSignalList = ({ signals, selectedSignal, onSelectSignal, getSourceIcon, onSeeAll }) => (
+const IncomingSignalList = ({ signals, selectedSignal, onSelectSignal, getSourceIcon, onSeeAll, isLoadingAPI, apiError }) => (
     <div className="flex-1 flex flex-col min-w-[340px]" style={{ marginLeft: "10px" }}>
         <div className="flex justify-between items-end mb-4 px-2">
-            <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Incoming Cases</h3>
+            <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wider">
+                Incoming Cases
+                {isLoadingAPI && <span className="ml-2 text-xs text-mashreq-orange">● Loading Live Data...</span>}
+                {apiError && <span className="ml-2 text-xs text-gray-500">● Using Sample Data</span>}
+            </h3>
         </div>
 
         <div

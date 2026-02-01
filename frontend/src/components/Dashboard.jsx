@@ -8,6 +8,7 @@ import DashboardInsights from "./subcomponents/DashboardInsights";
 import SentimentHeatmap from "./subcomponents/SentimentHeatmap";
 import SignalDetail from "./subcomponents/SignalDetail";
 import IncomingSignalList from "./subcomponents/IncomingSignalList";
+import apiService from "../services/api";
 
 const sentimentCountries = [
     {
@@ -58,6 +59,53 @@ const Dashboard = ({ onNavigate, selectedSignalId }) => {
     const [activeCountry, setActiveCountry] = useState(null);
     const [mapFeatures, setMapFeatures] = useState([]);
     const [mapError, setMapError] = useState(null);
+    const [signals, setSignals] = useState(sampleSignals); // Start with static data
+    const [isLoadingAPI, setIsLoadingAPI] = useState(false);
+    const [apiError, setApiError] = useState(null);
+
+    // Try to fetch data from API on mount
+    useEffect(() => {
+        const fetchLiveData = async () => {
+            try {
+                setIsLoadingAPI(true);
+                setApiError(null);
+                
+                // Try to process batch (limit 20 for dashboard)
+                const liveData = await apiService.processBatch(20);
+                
+                // Transform API response to match expected format
+                const transformedSignals = liveData.map((card, index) => ({
+                    id: `LIVE-${index + 1}`,
+                    title: card.title,
+                    summary: card.title,
+                    content: card.reverse_prompt.situation_background,
+                    category: card.category,
+                    priority: card.priority,
+                    riskLevel: card.priority === 'Critical' || card.priority === 'High' ? 'High' : 
+                               card.priority === 'Medium' ? 'Medium' : 'Low',
+                    timestamp: new Date().toISOString().slice(0, 16).replace('T', ' '),
+                    confidence: 0.85,
+                    risk_scores: card.risk_scores,
+                    reverse_prompt: card.reverse_prompt,
+                    source: "Live API",
+                    sourceType: "Backend API",
+                    type: card.category,
+                    aiAnalysis: card.reverse_prompt.situation_background,
+                    status: "Open"
+                }));
+                
+                setSignals(transformedSignals);
+                setIsLoadingAPI(false);
+            } catch (error) {
+                console.error('Failed to fetch live data from API:', error);
+                setApiError(error.message);
+                setIsLoadingAPI(false);
+                // Keep using static data as fallback
+            }
+        };
+
+        fetchLiveData();
+    }, []);
 
     useEffect(() => {
         const cls = "internal-detail";
@@ -71,11 +119,11 @@ const Dashboard = ({ onNavigate, selectedSignalId }) => {
 
     useEffect(() => {
         if (!selectedSignalId) return;
-        const found = sampleSignals.find((signal) => signal.id === selectedSignalId);
+        const found = signals.find((signal) => signal.id === selectedSignalId);
         if (found) {
             setSelectedSignal(found);
         }
-    }, [selectedSignalId]);
+    }, [selectedSignalId, signals]);
 
     useEffect(() => {
         const focusIsos = new Set(sentimentCountries.map((country) => country.iso));
@@ -132,34 +180,34 @@ const Dashboard = ({ onNavigate, selectedSignalId }) => {
 
     const priorityOrder = ["P0", "P1", "P2", "P3"];
     const stats = useMemo(() => {
-        const total = sampleSignals.length;
-        const byCategory = sampleSignals.reduce((acc, sig) => {
+        const total = signals.length;
+        const byCategory = signals.reduce((acc, sig) => {
             const key = sig.category || "uncategorized";
             acc[key] = (acc[key] || 0) + 1;
             return acc;
         }, {});
-        const byPriority = sampleSignals.reduce((acc, sig) => {
+        const byPriority = signals.reduce((acc, sig) => {
             const raw = (sig.priority || "P2").toUpperCase();
             const key = raw === "P0" ? "P0" : raw === "P1" ? "P1" : raw === "P2" ? "P2" : "P3";
             acc[key] = (acc[key] || 0) + 1;
             return acc;
         }, {});
-        const status = sampleSignals.reduce(
+        const status = signals.reduce(
             (acc, sig) => {
                 acc[sig.status || "Open"] = (acc[sig.status || "Open"] || 0) + 1;
                 return acc;
             },
             { Open: 0, Escalated: 0, Unverified: 0 },
         );
-        const byChannel = sampleSignals.reduce((acc, sig) => {
+        const byChannel = signals.reduce((acc, sig) => {
             const key = sig.sourceType || sig.source || "Other";
             acc[key] = (acc[key] || 0) + 1;
             return acc;
         }, {});
         const avgConfidence = total
-            ? Math.round((sampleSignals.reduce((sum, sig) => sum + (sig.confidence || 0), 0) / total) * 100)
+            ? Math.round((signals.reduce((sum, sig) => sum + (sig.confidence || 0), 0) / total) * 100)
             : 0;
-        const riskTotals = sampleSignals.reduce(
+        const riskTotals = signals.reduce(
             (acc, sig) => {
                 const scores = sig.risk_scores || {};
                 acc.compliance += scores.compliance || 0;
@@ -179,7 +227,7 @@ const Dashboard = ({ onNavigate, selectedSignalId }) => {
             virality: total ? Math.round(riskTotals.virality / total) : 0,
         };
         return { total, byCategory, byPriority, status, byChannel, avgConfidence, avgRisk };
-    }, [sampleSignals]);
+    }, [signals]);
 
     const priorityPalette = {
         P0: "#D32F2F",
@@ -237,11 +285,13 @@ const Dashboard = ({ onNavigate, selectedSignalId }) => {
                         </div>
 
                         <IncomingSignalList
-                            signals={sampleSignals}
+                            signals={signals}
                             selectedSignal={selectedSignal}
                             onSelectSignal={setSelectedSignal}
                             getSourceIcon={getSourceIcon}
                             onSeeAll={() => onNavigate?.("reports")}
+                            isLoadingAPI={isLoadingAPI}
+                            apiError={apiError}
                         />
                     </div>
 
