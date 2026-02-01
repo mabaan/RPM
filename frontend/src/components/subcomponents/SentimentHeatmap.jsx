@@ -46,7 +46,7 @@ const SentimentHeatmap = ({
 
     return (
         <div
-            className="flex-1 flex flex-col items-center justify-center text-gray-300 border-2 border-dashed border-gray-200 rounded-3xl bg-white/30 backdrop-blur-md relative overflow-hidden group transition-all hover:bg-white/40"
+            className="flex-1 flex flex-col items-center justify-center text-gray-300 border-2 border-gray-200 rounded-3xl bg-white/30 backdrop-blur-md relative overflow-hidden group transition-all hover:bg-white/40"
             style={{ marginLeft: "15px", marginBottom: "20px" }}>
 
             {/* Dynamic Background Glow */}
