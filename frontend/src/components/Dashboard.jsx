@@ -4,6 +4,7 @@ import { feature } from "topojson-client";
 import { Activity, Mail, MessageSquare, FileText } from "lucide-react";
 import sampleSignals from "../data/sampleSignals.json";
 import DashboardHeader from "./subcomponents/DashboardHeader";
+import DashboardInsights from "./subcomponents/DashboardInsights";
 import SentimentHeatmap from "./subcomponents/SentimentHeatmap";
 import SignalDetail from "./subcomponents/SignalDetail";
 import IncomingSignalList from "./subcomponents/IncomingSignalList";
@@ -51,7 +52,7 @@ const getSourceIcon = (source) => {
     return <FileText size={14} />;
 };
 
-const Dashboard = () => {
+const Dashboard = ({ onNavigate }) => {
     const [selectedSignal, setSelectedSignal] = useState(null);
     const [hoveredCountry, setHoveredCountry] = useState(null);
     const [activeCountry, setActiveCountry] = useState(null);
@@ -121,15 +122,94 @@ const Dashboard = () => {
         }));
     }, [mapFeatures]);
 
+    const priorityOrder = ["P0", "P1", "P2", "P3"];
+    const stats = useMemo(() => {
+        const total = sampleSignals.length;
+        const byCategory = sampleSignals.reduce((acc, sig) => {
+            const key = sig.category || "uncategorized";
+            acc[key] = (acc[key] || 0) + 1;
+            return acc;
+        }, {});
+        const byPriority = sampleSignals.reduce((acc, sig) => {
+            const raw = (sig.priority || "P2").toUpperCase();
+            const key = raw === "P0" ? "P0" : raw === "P1" ? "P1" : raw === "P2" ? "P2" : "P3";
+            acc[key] = (acc[key] || 0) + 1;
+            return acc;
+        }, {});
+        const status = sampleSignals.reduce(
+            (acc, sig) => {
+                acc[sig.status || "Open"] = (acc[sig.status || "Open"] || 0) + 1;
+                return acc;
+            },
+            { Open: 0, Escalated: 0, Unverified: 0 },
+        );
+        const byChannel = sampleSignals.reduce((acc, sig) => {
+            const key = sig.sourceType || sig.source || "Other";
+            acc[key] = (acc[key] || 0) + 1;
+            return acc;
+        }, {});
+        const avgConfidence = total
+            ? Math.round((sampleSignals.reduce((sum, sig) => sum + (sig.confidence || 0), 0) / total) * 100)
+            : 0;
+        const riskTotals = sampleSignals.reduce(
+            (acc, sig) => {
+                const scores = sig.risk_scores || {};
+                acc.compliance += scores.compliance || 0;
+                acc.financial += scores.financial || 0;
+                acc.operational += scores.operational || 0;
+                acc.churn += scores.churn || 0;
+                acc.virality += scores.virality || 0;
+                return acc;
+            },
+            { compliance: 0, financial: 0, operational: 0, churn: 0, virality: 0 },
+        );
+        const avgRisk = {
+            compliance: total ? Math.round(riskTotals.compliance / total) : 0,
+            financial: total ? Math.round(riskTotals.financial / total) : 0,
+            operational: total ? Math.round(riskTotals.operational / total) : 0,
+            churn: total ? Math.round(riskTotals.churn / total) : 0,
+            virality: total ? Math.round(riskTotals.virality / total) : 0,
+        };
+        return { total, byCategory, byPriority, status, byChannel, avgConfidence, avgRisk };
+    }, [sampleSignals]);
+
+    const priorityPalette = {
+        P0: "#D32F2F",
+        P1: "#F57C00",
+        P2: "#FBC02D",
+        P3: "#388E3C",
+    };
+
+    const priorityPie = useMemo(() => {
+        const total = stats.total || 1;
+        let cursor = 0;
+        const segments = priorityOrder.map((p) => {
+            const val = stats.byPriority[p] || 0;
+            const pct = (val / total) * 100;
+            const start = cursor;
+            const end = cursor + pct;
+            cursor = end;
+            return {
+                key: p,
+                val,
+                pct,
+                color: priorityPalette[p] || "#e5e7eb",
+                range: `${start}% ${end}%`,
+            };
+        });
+        const gradient = `conic-gradient(${segments.map((s) => `${s.color} ${s.range}`).join(", ")})`;
+        return { segments, gradient };
+    }, [stats]);
+
     return (
         <div className="h-full flex flex-col pb-10">
-            <div className="flex-1 min-h-[5vh]"></div>
+            <div style={{ minHeight: "12px" }}></div>
 
             <div className="flex justify-center w-full px-10">
                 <div className="w-full max-w-7xl bg-white/40 backdrop-blur-xl rounded-3xl p-8 min-h-[600px] flex flex-col relative overflow-hidden shadow-2xl border border-white/60">
                     <DashboardHeader />
 
-                    <div className="flex flex-col lg:flex-row gap-8 flex-1 relative z-10" style={{ marginLeft: "15px", marginRight: "15px", marginTop: "15px" }}>
+                    <div className="flex flex-col lg:flex-row gap-8 flex-1 relative z-10" style={{ marginLeft: "15px", marginRight: "15px", marginTop: "8px" }}>
                         <div className="flex-[2] flex flex-col relative transition-all duration-500" style={{ marginRight: "10px" }}>
                             {selectedSignal ? (
                                 <SignalDetail selectedSignal={selectedSignal} onBack={() => setSelectedSignal(null)} getSourceIcon={getSourceIcon} />
@@ -153,6 +233,7 @@ const Dashboard = () => {
                             selectedSignal={selectedSignal}
                             onSelectSignal={setSelectedSignal}
                             getSourceIcon={getSourceIcon}
+                            onSeeAll={() => onNavigate?.("reports")}
                         />
                     </div>
 
@@ -160,9 +241,12 @@ const Dashboard = () => {
                 </div>
             </div>
 
+            {/* Insight cards under main panel */}
+            {!selectedSignal ? <DashboardInsights stats={stats} priorityPie={priorityPie} /> : null}
             <div className="flex-1"></div>
         </div>
     );
 };
 
 export default Dashboard;
+

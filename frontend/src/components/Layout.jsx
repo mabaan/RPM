@@ -3,6 +3,7 @@ import Sidebar from './Sidebar';
 import Dashboard from './Dashboard';
 import Reports from './Reports';
 import RootCause from './RootCause/RootCause';
+import Settings from './Settings';
 
 const Layout = () => {
     const [activeTab, setActiveTab] = useState('dashboard');
@@ -81,9 +82,10 @@ const Layout = () => {
 
                 {/* Dynamic Content */}
                 <main className="flex-1 overflow-y-auto pr-2 scrollbar-hide pb-10">
-                    {activeTab === 'dashboard' && <Dashboard />}
+                    {activeTab === 'dashboard' && <Dashboard onNavigate={setActiveTab} />}
                     {activeTab === 'reports' && <Reports type={activeTab} />}
                     {activeTab === 'analytics' && <RootCause />}
+                    {activeTab === 'settings' && <Settings />}
                 </main>
 
             </div>

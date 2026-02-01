@@ -1,98 +1,339 @@
-import React from 'react';
-import { Search, Filter, Download } from 'lucide-react';
+import React, { useMemo, useState } from "react";
+import { Search, ArrowDownUp, AlertTriangle, Info, CheckCircle, Clock, Mail, MessageSquare, Activity, FileText } from "lucide-react";
+import sampleSignals from "../data/sampleSignals.json";
 
-const Reports = ({ type }) => {
-    const isIncidents = type === 'reports';
+const priorityOrder = ["P0", "P1", "P2", "P3"];
+const priorityPalette = {
+    P0: "#D32F2F",
+    P1: "#F57C00",
+    P2: "#FBC02D",
+    P3: "#388E3C",
+};
 
-    // Dummy Data
-    const incidents = [
-        { id: 'INC-2024-001', type: 'Server Outage', priority: 'High', status: 'Resolving', time: '10:42 AM' },
-        { id: 'INC-2024-002', type: 'Database Latency', priority: 'Medium', status: 'Investigating', time: '11:15 AM' },
-        { id: 'INC-2024-003', type: 'API Timeout', priority: 'Low', status: 'Open', time: '12:30 PM' },
-    ];
+const parseTimestamp = (value) => {
+    if (!value) return null;
+    const normalized = String(value).trim().replace(" ", "T") + "Z";
+    const date = new Date(normalized);
+    return isNaN(date.getTime()) ? null : date;
+};
 
-    const analytics = [
-        { id: 'RPT-8821', name: 'Monthly Transaction Summary', date: 'Jan 30, 2026', size: '2.4 MB' },
-        { id: 'RPT-8822', name: 'User Growth Q1', date: 'Jan 28, 2026', size: '1.1 MB' },
-        { id: 'RPT-8823', name: 'Security Audit Logs', date: 'Jan 25, 2026', size: '15.6 MB' },
-    ];
+const formatShortDate = (value) => {
+    const date = parseTimestamp(value);
+    if (!date) return value || "-";
+    return new Intl.DateTimeFormat("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: false,
+    }).format(date);
+};
+
+const riskBadge = {
+    High: { bg: "#FEE2E2", text: "#B91C1C", border: "1px solid #FEE2E2", icon: AlertTriangle },
+    Medium: { bg: "#FEF3C7", text: "#B45309", border: "1px solid #FEF3C7", icon: Info },
+    Low: { bg: "#DCFCE7", text: "#15803D", border: "1px solid #DCFCE7", icon: CheckCircle },
+};
+
+const getSourceIcon = (source) => {
+    if (source === "Email") return Mail;
+    if (source === "Chatbot") return MessageSquare;
+    if (source === "Twitter" || source === "Social") return Activity;
+    return FileText;
+};
+
+const Reports = () => {
+    const [searchTerm, setSearchTerm] = useState("");
+    const [priorityFilter, setPriorityFilter] = useState("All");
+    const [categoryFilter, setCategoryFilter] = useState("All");
+    const [statusFilter, setStatusFilter] = useState("All");
+    const [sortBy, setSortBy] = useState("Latest");
+
+    const categories = useMemo(() => {
+        const set = new Set(sampleSignals.map((item) => item.category || "uncategorized"));
+        return ["All", ...Array.from(set)];
+    }, []);
+
+    const statuses = useMemo(() => {
+        const set = new Set(sampleSignals.map((item) => item.status || "Open"));
+        return ["All", ...Array.from(set)];
+    }, []);
+
+    const filtered = useMemo(() => {
+        const term = searchTerm.trim().toLowerCase();
+        let list = sampleSignals.filter((item) => {
+            const matchesTerm =
+                !term ||
+                item.title?.toLowerCase().includes(term) ||
+                item.summary?.toLowerCase().includes(term) ||
+                item.content?.toLowerCase().includes(term);
+            const matchesPriority = priorityFilter === "All" || item.priority === priorityFilter;
+            const matchesCategory = categoryFilter === "All" || item.category === categoryFilter;
+            const matchesStatus = statusFilter === "All" || (item.status || "Open") === statusFilter;
+            return matchesTerm && matchesPriority && matchesCategory && matchesStatus;
+        });
+
+        if (sortBy === "Latest") {
+            list = [...list].sort((a, b) => (parseTimestamp(b.timestamp)?.getTime() || 0) - (parseTimestamp(a.timestamp)?.getTime() || 0));
+        } else if (sortBy === "Priority") {
+            list = [...list].sort(
+                (a, b) => priorityOrder.indexOf(a.priority || "P3") - priorityOrder.indexOf(b.priority || "P3"),
+            );
+        } else if (sortBy === "Confidence") {
+            list = [...list].sort((a, b) => (b.confidence || 0) - (a.confidence || 0));
+        }
+
+        return list;
+    }, [searchTerm, priorityFilter, categoryFilter, statusFilter, sortBy]);
 
     return (
-        <div className="glass-panel rounded-2xl p-6 h-full animate-fade-in">
-            <div className="flex justify-between items-center mb-8">
-                <div>
-                    <h2 className="text-2xl font-bold text-white capitalize">{isIncidents ? 'Incident Reports' : 'Analytics & Logs'}</h2>
-                    <p className="text-sm text-white/50 mt-1">View and manage system reports</p>
-                </div>
-                <div className="flex gap-4">
-                    <div className="relative">
-                        <input
-                            type="text"
-                            placeholder="Search..."
-                            className="bg-white/5 border border-white/10 rounded-full py-2 pl-4 pr-10 text-sm text-white focus:outline-none focus:border-mashreq-orange"
-                        />
-                        <Search className="absolute right-3 top-2.5 text-white/30" size={16} />
+        <div className="h-full flex flex-col animate-fade-in" style={{ paddingBottom: "40px" }}>
+            <div className="flex-1 min-h-[5vh]"></div>
+
+            <div className="flex justify-center w-full" style={{ paddingLeft: "40px", paddingRight: "40px" }}>
+                <div
+                    className="w-full max-w-7xl bg-white/50 backdrop-blur-xl rounded-3xl flex flex-col shadow-2xl border border-white/70"
+                    style={{ padding: "28px 30px 32px 30px", minHeight: "620px" }}>
+                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-end", marginBottom: "14px" }}>
+                        <div>
+                            <h2 className="text-3xl font-bold text-gray-900 tracking-tight">Incident Reports</h2>
+                            <p className="text-sm text-gray-500" style={{ marginTop: "6px" }}>
+                                Browse all incoming cases with filters and sorting.
+                            </p>
+                        </div>
+                        <div style={{ fontSize: "11px", color: "#94a3b8", textTransform: "uppercase", letterSpacing: "0.2em" }}>
+                            {filtered.length} results
+                        </div>
                     </div>
-                    <button className="p-2 bg-white/5 border border-white/10 rounded-full text-white/70 hover:text-white hover:bg-white/10">
-                        <Filter size={20} />
-                    </button>
+
+                    <div
+                        style={{
+                            display: "grid",
+                            gridTemplateColumns: "2fr 1fr 1fr 1fr 1fr",
+                            gap: "12px",
+                            alignItems: "center",
+                            marginBottom: "20px",
+                        }}>
+                        <div style={{ position: "relative" }}>
+                            <Search size={16} style={{ position: "absolute", left: "12px", top: "50%", transform: "translateY(-50%)", color: "#94a3b8" }} />
+                            <input
+                                type="text"
+                                placeholder="Search by summary, title, or content"
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                style={{
+                                    width: "100%",
+                                    borderRadius: "12px",
+                                    border: "1px solid rgba(226,232,240,0.8)",
+                                    padding: "10px 12px 10px 36px",
+                                    fontSize: "12px",
+                                    color: "#0f172a",
+                                    background: "rgba(255,255,255,0.8)",
+                                }}
+                            />
+                        </div>
+
+                        <div>
+                            <select
+                                value={priorityFilter}
+                                onChange={(e) => setPriorityFilter(e.target.value)}
+                                style={{
+                                    width: "100%",
+                                    borderRadius: "12px",
+                                    border: "1px solid rgba(226,232,240,0.8)",
+                                    padding: "10px 12px",
+                                    fontSize: "12px",
+                                    color: "#0f172a",
+                                    background: "rgba(255,255,255,0.8)",
+                                }}>
+                                {["All", ...priorityOrder].map((p) => (
+                                    <option key={p} value={p}>
+                                        {p === "All" ? "All Priorities" : p}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div>
+                            <select
+                                value={categoryFilter}
+                                onChange={(e) => setCategoryFilter(e.target.value)}
+                                style={{
+                                    width: "100%",
+                                    borderRadius: "12px",
+                                    border: "1px solid rgba(226,232,240,0.8)",
+                                    padding: "10px 12px",
+                                    fontSize: "12px",
+                                    color: "#0f172a",
+                                    background: "rgba(255,255,255,0.8)",
+                                }}>
+                                {categories.map((cat) => (
+                                    <option key={cat} value={cat}>
+                                        {cat === "All" ? "All Categories" : cat}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div>
+                            <select
+                                value={statusFilter}
+                                onChange={(e) => setStatusFilter(e.target.value)}
+                                style={{
+                                    width: "100%",
+                                    borderRadius: "12px",
+                                    border: "1px solid rgba(226,232,240,0.8)",
+                                    padding: "10px 12px",
+                                    fontSize: "12px",
+                                    color: "#0f172a",
+                                    background: "rgba(255,255,255,0.8)",
+                                }}>
+                                {statuses.map((status) => (
+                                    <option key={status} value={status}>
+                                        {status === "All" ? "All Statuses" : status}
+                                    </option>
+                                ))}
+                            </select>
+                        </div>
+
+                        <div>
+                            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                <ArrowDownUp size={16} style={{ color: "#94a3b8" }} />
+                                <select
+                                    value={sortBy}
+                                    onChange={(e) => setSortBy(e.target.value)}
+                                    style={{
+                                        width: "100%",
+                                        borderRadius: "12px",
+                                        border: "1px solid rgba(226,232,240,0.8)",
+                                        padding: "10px 12px",
+                                        fontSize: "12px",
+                                        color: "#0f172a",
+                                        background: "rgba(255,255,255,0.8)",
+                                    }}>
+                                    <option value="Latest">Latest</option>
+                                    <option value="Priority">Priority</option>
+                                    <option value="Confidence">Confidence</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "14px" }}>
+                        {filtered.map((signal) => {
+                            const risk = riskBadge[signal.riskLevel] || riskBadge.Low;
+                            const RiskIcon = risk.icon;
+                            const SourceIcon = getSourceIcon(signal.source);
+                            return (
+                                <div
+                                    key={signal.id}
+                                    className="report-card"
+                                    style={{
+                                        display: "flex",
+                                        flexDirection: "column",
+                                        borderRadius: "16px",
+                                        padding: "14px 16px",
+                                        border: risk.border,
+                                        background: "rgba(255,255,255,0.78)",
+                                        boxShadow: "0 8px 16px rgba(15,23,42,0.08)",
+                                    }}>
+                                    <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "8px" }}>
+                                        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                                            <span
+                                                style={{
+                                                    padding: "4px 10px",
+                                                    borderRadius: "999px",
+                                                    fontSize: "10px",
+                                                    fontWeight: 700,
+                                                    textTransform: "uppercase",
+                                                    letterSpacing: "0.04em",
+                                                    background: risk.bg,
+                                                    color: risk.text,
+                                                    display: "inline-flex",
+                                                    alignItems: "center",
+                                                    gap: "6px",
+                                                }}>
+                                                <RiskIcon size={12} />
+                                                {signal.type}
+                                            </span>
+                                            <span
+                                                style={{
+                                                    padding: "4px 8px",
+                                                    borderRadius: "999px",
+                                                    fontSize: "10px",
+                                                    fontWeight: 700,
+                                                    background: `${priorityPalette[signal.priority] || "#94a3b8"}20`,
+                                                    color: priorityPalette[signal.priority] || "#64748b",
+                                                }}>
+                                                {signal.priority}
+                                            </span>
+                                        </div>
+                                        <span
+                                            style={{
+                                                fontSize: "10px",
+                                                color: "#94a3b8",
+                                                display: "inline-flex",
+                                                alignItems: "center",
+                                                gap: "4px",
+                                                marginLeft: "12px",
+                                                whiteSpace: "nowrap",
+                                                minWidth: "90px",
+                                                justifyContent: "flex-end",
+                                            }}>
+                                            <Clock size={12} /> {formatShortDate(signal.timestamp)}
+                                        </span>
+                                    </div>
+
+                                    <div style={{ fontSize: "14px", fontWeight: 700, color: "#0f172a", marginBottom: "6px" }}>
+                                        {signal.summary}
+                                    </div>
+                                    <div style={{ fontSize: "12px", color: "#64748b", marginBottom: "12px" }}>{signal.content}</div>
+
+                                    <div
+                                        style={{
+                                            display: "flex",
+                                            justifyContent: "space-between",
+                                            alignItems: "center",
+                                            borderTop: "1px solid #E5E7EB",
+                                            paddingTop: "10px",
+                                            marginTop: "auto",
+                                        }}>
+                                        <span
+                                            style={{
+                                                fontSize: "10px",
+                                                color: "#94a3b8",
+                                                display: "flex",
+                                                alignItems: "center",
+                                                gap: "6px",
+                                                textTransform: "uppercase",
+                                                letterSpacing: "0.06em",
+                                                fontWeight: 600,
+                                            }}>
+                                            <SourceIcon size={12} />
+                                            {signal.sourceType || signal.source}
+                                        </span>
+                                        <span
+                                            style={{
+                                                fontSize: "10px",
+                                                fontWeight: 700,
+                                                color: "#4B5563",
+                                                background: "#F3F4F6",
+                                                padding: "4px 7px",
+                                                borderRadius: "8px",
+                                                fontFamily: "ui-monospace",
+                                            }}>
+                                            {(signal.confidence * 100).toFixed(0)}% Conf
+                                        </span>
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    </div>
                 </div>
             </div>
 
-            <div className="overflow-x-auto">
-                <table className="w-full text-left border-collapse">
-                    <thead>
-                        <tr className="border-b border-white/10">
-                            <th className="py-4 px-4 text-sm font-medium text-white/40 uppercase tracking-wider">ID</th>
-                            <th className="py-4 px-4 text-sm font-medium text-white/40 uppercase tracking-wider">{isIncidents ? 'Issue Type' : 'Report Name'}</th>
-                            <th className="py-4 px-4 text-sm font-medium text-white/40 uppercase tracking-wider">{isIncidents ? 'Priority' : 'Date Generated'}</th>
-                            <th className="py-4 px-4 text-sm font-medium text-white/40 uppercase tracking-wider">{isIncidents ? 'Status' : 'Size'}</th>
-                            <th className="py-4 px-4 text-sm font-medium text-white/40 uppercase tracking-wider">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody className="divide-y divide-white/5">
-                        {(isIncidents ? incidents : analytics).map((item, idx) => (
-                            <tr key={idx} className="hover:bg-white/5 transition-colors group">
-                                <td className="py-4 px-4 text-white font-mono text-sm opacity-80">{item.id}</td>
-                                <td className="py-4 px-4 text-white font-medium">{isIncidents ? item.type : item.name}</td>
-                                <td className="py-4 px-4">
-                                    {isIncidents ? (
-                                        <span className={`px-2 py-1 rounded text-xs border ${item.priority === 'High' ? 'border-red-500/50 text-red-500 bg-red-500/10' :
-                                                item.priority === 'Medium' ? 'border-yellow-500/50 text-yellow-500 bg-yellow-500/10' :
-                                                    'border-blue-500/50 text-blue-500 bg-blue-500/10'
-                                            }`}>
-                                            {item.priority}
-                                        </span>
-                                    ) : (
-                                        <span className="text-white/60 text-sm">{item.date}</span>
-                                    )}
-                                </td>
-                                <td className="py-4 px-4">
-                                    {isIncidents ? (
-                                        <span className="text-white/80 text-sm flex items-center gap-2">
-                                            <div className={`w-1.5 h-1.5 rounded-full ${item.status === 'Resolving' ? 'bg-orange-500 animate-pulse' : 'bg-gray-500'}`}></div>
-                                            {item.status}
-                                        </span>
-                                    ) : (
-                                        <span className="text-white/50 text-sm font-mono">{item.size}</span>
-                                    )}
-                                </td>
-                                <td className="py-4 px-4">
-                                    <button className="text-mashreq-orange hover:text-white transition-colors">
-                                        <Download size={18} />
-                                    </button>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
-            </div>
-
-            <div className="mt-6 flex justify-center">
-                <button className="text-xs text-white/30 hover:text-white transition-colors uppercase tracking-widest">
-                    View All {isIncidents ? 'Incidents' : 'Logs'}
-                </button>
-            </div>
+            <div className="flex-1"></div>
         </div>
     );
 };
