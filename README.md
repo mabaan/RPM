@@ -11,9 +11,8 @@ No external actions, no commitments, no automated refunds.
 
 **Architecture diagram**
 
-
 <div align="center">
-  <img width="495" height="986" alt="image" src="https://github.com/user-attachments/assets/1006d2fe-222c-432c-95c2-10f07459e09b" />
+  <img width="494" height="984" alt="image" src="https://github.com/user-attachments/assets/0725c943-8cb3-4ec0-b709-56ce8b318b86" />
 </div>
 
 ---
