@@ -27,7 +27,7 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
     });
 
     nodes.forEach((node) => {
-        dagreGraph.setNode(node.id, { width: 220, height: 100 });
+        dagreGraph.setNode(node.id, { width: 320, height: 180 });
     });
 
     edges.forEach((edge) => {
@@ -41,11 +41,9 @@ const getLayoutedElements = (nodes, edges, direction = 'TB') => {
         node.targetPosition = isHorizontal ? 'left' : 'top';
         node.sourcePosition = isHorizontal ? 'right' : 'bottom';
 
-        // We are shifting the dagre node position (anchor=center center) to the top left
-        // so it matches the React Flow node anchor point (top left).
         node.position = {
-            x: nodeWithPosition.x - 220 / 2,
-            y: nodeWithPosition.y - 100 / 2,
+            x: nodeWithPosition.x - 320 / 2,
+            y: nodeWithPosition.y - 180 / 2,
         };
 
         return node;
@@ -79,10 +77,12 @@ const transformData = (root) => {
                 target: node.id,
                 type: 'smoothstep',
                 animated: true,
-                style: { stroke: node.pressure > 70 ? '#EF4444' : '#94a3b8', strokeWidth: 2 },
+                style: { stroke: node.pressure > 70 ? '#EF4444' : '#64748b', strokeWidth: 3 },
                 markerEnd: {
                     type: MarkerType.ArrowClosed,
-                    color: node.pressure > 70 ? '#EF4444' : '#94a3b8',
+                    color: node.pressure > 70 ? '#EF4444' : '#64748b',
+                    width: 20,
+                    height: 20,
                 },
             });
         }
@@ -100,10 +100,12 @@ const transformData = (root) => {
                     target: targetId,
                     type: 'default',
                     animated: true,
-                    style: { stroke: '#FFC400', strokeWidth: 1.5, strokeDasharray: '5,5' },
+                    style: { stroke: '#FFC400', strokeWidth: 2.5, strokeDasharray: '5,5' },
                     markerEnd: {
                         type: MarkerType.ArrowClosed,
                         color: '#FFC400',
+                        width: 18,
+                        height: 18,
                     },
                 });
             });
@@ -131,6 +133,19 @@ const PressureTree = ({ data, onNodeClick }) => {
 
     const onConnect = useCallback((params) => setEdges((eds) => addEdge(params, eds)), [setEdges]);
 
+    const onInit = useCallback((reactFlowInstance) => {
+        // Fit view first, then shift upward
+        reactFlowInstance.fitView({ maxZoom: 0.525, padding: 0.1 });
+        setTimeout(() => {
+            const viewport = reactFlowInstance.getViewport();
+            reactFlowInstance.setViewport({
+                x: viewport.x,
+                y: viewport.y - 30, // Shift content up (negative moves up)
+                zoom: viewport.zoom
+            });
+        }, 50);
+    }, []);
+
     return (
         <div className="w-full h-full min-h-[600px] rounded-3xl overflow-hidden">
             <ReactFlow
@@ -141,13 +156,12 @@ const PressureTree = ({ data, onNodeClick }) => {
                 onConnect={onConnect}
                 nodeTypes={nodeTypes}
                 onNodeClick={(event, node) => onNodeClick(node.data.srcData)}
-                fitView
-                attributionPosition="bottom-right"
+                onInit={onInit}
+                proOptions={{ hideAttribution: true }}
                 className="bg-transparent"
-                minZoom={0.2}
+                minZoom={0.1}
             >
                 <Background gap={20} size={1} color="rgba(0,0,0,0.1)" />
-                <Controls className="bg-white/80 backdrop-blur-md border-white/50 text-gray-600" />
             </ReactFlow>
         </div>
     );

@@ -34,87 +34,63 @@ const NodeDetailsModal = ({ isOpen, onClose, nodeData, onEliminate }) => {
                     exit={{ scale: 0.9, opacity: 0, y: 20 }}
                     className="relative w-full max-w-lg bg-white/90 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/50 overflow-hidden"
                 >
-                    {/* Header */}
-                    <div className={`${headerColor} p-6 pb-8 text-white relative overflow-hidden transition-colors duration-300`}>
+                    {/* Header - Full bleed background with internal padding */}
+                    <div className={`${headerColor} text-white relative overflow-hidden transition-colors duration-300`}>
+                        {/* Background Deco */}
                         <div className="absolute top-0 right-0 p-4 opacity-10 rotate-12">
                             <Activity size={120} />
                         </div>
 
-                        <div className="relative z-10 flex justify-between items-start">
-                            <div>
-                                <div className="text-white/80 text-xs font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
-                                    {type === 'root' ? 'Organization' : type === 'department' ? 'Department' : 'Problem Node'}
+                        {/* Content with internal padding */}
+                        <div className="relative z-10" style={{ padding: '16px 20px' }}>
+                            {/* Top Row: Type, Title, Close */}
+                            <div className="flex justify-between items-start">
+                                <div>
+                                    <div className="text-white/80 text-xs font-bold uppercase tracking-wider mb-1 flex items-center gap-1">
+                                        {type === 'root' ? 'Organization' : type === 'department' ? 'Department' : 'Problem Node'}
+                                    </div>
+                                    <h2 className="text-2xl font-bold">{displayTitle}</h2>
                                 </div>
-                                <h2 className="text-2xl font-bold">{displayTitle}</h2>
+                                <button onClick={onClose} className="p-1 hover:bg-white/20 rounded-full transition-colors">
+                                    <X size={24} />
+                                </button>
                             </div>
-                            <button onClick={onClose} className="p-1 hover:bg-white/20 rounded-full transition-colors">
-                                <X size={24} />
-                            </button>
-                        </div>
 
-                        <div className="relative z-10 mt-4 flex items-center gap-3">
-                            <div className="text-4xl font-bold">{pressure}%</div>
-                            <div className="text-sm opacity-90 leading-tight">
-                                Current Pressure<br />Level
+                            {/* Pressure Big Stat */}
+                            <div className="mt-4 flex items-center gap-3">
+                                <div className="text-4xl font-bold">{pressure}%</div>
+                                <div className="text-sm opacity-90 leading-tight">
+                                    Current Pressure<br />Level
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    {/* Body */}
-                    <div className="p-6 space-y-6">
-
-                        {/* Summary */}
-                        {summary && (
-                            <div>
+                    {/* Body Section - Full bleed background with internal padding */}
+                    <div className="bg-white/50">
+                        <div className="space-y-6" style={{ padding: '16px 20px' }}>
+                            {/* AI Summary Section */}
+                            <div className="mb-6">
                                 <h3 className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">AI Summary</h3>
-                                <div className="text-gray-800 leading-relaxed bg-white/50 p-3 rounded-lg border border-white/60">
-                                    {summary}
+                                <div className="text-gray-800 leading-relaxed">
+                                    {summary || "No AI summary available for this node."}
                                 </div>
                             </div>
-                        )}
 
-                        {/* Source Signals */}
-                        {sourceSignals && sourceSignals.length > 0 && (
-                            <div>
-                                <h3 className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Source Signals</h3>
-                                <div className="flex flex-wrap gap-2">
-                                    {sourceSignals.map((signal, idx) => (
-                                        <div key={idx} className="flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-700 rounded-full text-xs font-medium border border-blue-100">
-                                            <AlertTriangle size={12} />
-                                            {signal}
-                                        </div>
-                                    ))}
-                                </div>
+                            {/* Action Details */}
+                            <div className="pt-6 border-t border-gray-200">
+                                <button
+                                    onClick={() => onEliminate(id)}
+                                    className="w-full py-4 bg-gradient-to-r from-mashreq-orange to-mashreq-yellow rounded-xl text-white font-bold text-lg shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group"
+                                    style={{ marginTop: '10px' }}
+                                >
+                                    <Zap className="group-hover:text-yellow-100 fill-current" />
+                                    Initiate Resolution Protocol
+                                </button>
+                                <p className="text-center text-xs text-gray-400 mt-2">
+                                    Resolving this issue will relieve pressure on parent nodes.
+                                </p>
                             </div>
-                        )}
-
-                        {/* Cross Links */}
-                        {crossLinks && crossLinks.length > 0 && (
-                            <div>
-                                <h3 className="text-gray-500 text-xs font-bold uppercase tracking-wider mb-2">Cross-Department Links</h3>
-                                <div className="space-y-2">
-                                    {crossLinks.map((link, idx) => (
-                                        <div key={idx} className="flex items-center gap-2 text-sm text-gray-600">
-                                            <Link2 size={16} className="text-mashreq-orange" />
-                                            <span>Linked to node <span className="font-mono bg-gray-100 px-1 rounded">{link}</span></span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        )}
-
-                        {/* Action Area */}
-                        <div className="pt-4 border-t border-gray-100">
-                            <button
-                                onClick={() => onEliminate(id)}
-                                className="w-full py-4 bg-gradient-to-r from-mashreq-orange to-mashreq-yellow rounded-xl text-white font-bold text-lg shadow-lg hover:shadow-xl hover:scale-[1.02] active:scale-[0.98] transition-all flex items-center justify-center gap-2 group"
-                            >
-                                <Zap className="group-hover:text-yellow-100 fill-current" />
-                                Initiate Resolution Protocol
-                            </button>
-                            <p className="text-center text-xs text-gray-400 mt-2">
-                                Resolving this issue will relieve pressure on parent nodes.
-                            </p>
                         </div>
                     </div>
 
