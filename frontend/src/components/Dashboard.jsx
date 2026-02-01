@@ -52,7 +52,7 @@ const getSourceIcon = (source) => {
     return <FileText size={14} />;
 };
 
-const Dashboard = () => {
+const Dashboard = ({ onNavigate }) => {
     const [selectedSignal, setSelectedSignal] = useState(null);
     const [hoveredCountry, setHoveredCountry] = useState(null);
     const [activeCountry, setActiveCountry] = useState(null);
@@ -233,6 +233,7 @@ const Dashboard = () => {
                             selectedSignal={selectedSignal}
                             onSelectSignal={setSelectedSignal}
                             getSourceIcon={getSourceIcon}
+                            onSeeAll={() => onNavigate?.("reports")}
                         />
                     </div>
 

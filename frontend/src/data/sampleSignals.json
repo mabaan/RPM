@@ -32,8 +32,8 @@
         "[crm @ 2026-01-31T10:45:00Z] Customer requested deletion of personal data and an access report. Route to Legal."
       ],
       "relevant_policy_excerpts": [
-        "From the Global Policy: 'If the customer asks about their personal data....'",
-        "From the Legal Playbook: 'Data Privacy Requests (PDPL aware handling): If the customer requests....'"
+        "From the Global Policy: If the customer asks about their personal data....",
+        "From the Legal Playbook: Data Privacy Requests (PDPL aware handling) - If the customer requests...."
       ],
       "similar_cases": [
         "evt_chat_009",
@@ -102,7 +102,7 @@
   {
     "id": "CASE-2003",
     "title": "International transfers intermittently failing with 404 errors",
-    "summary": "12% of chatbot sessions in last 15 mins report 'Transfer Error' on international transfers.",
+    "summary": "12% of chatbot sessions in last 15 mins report Transfer Error on international transfers.",
     "content": "I cannot transfer money to my international beneficiary, getting error 404",
     "user": "Session_8821",
     "source": "Chatbot",
@@ -147,7 +147,7 @@
     "id": "CASE-2004",
     "title": "Cardholder disputes overseas charges and requests immediate card freeze",
     "summary": "Customer saw multiple overseas POS charges after recent travel; requests freeze and chargeback guidance.",
-    "content": "I just landed and see three charges from a store in Madrid. I didn't make them—freeze my card now.",
+    "content": "I just landed and see three charges from a store in Madrid. I did not make them; freeze my card now.",
     "user": "travelsafe99",
     "source": "Phone",
     "sourceType": "Contact Center",
@@ -170,7 +170,7 @@
       "customer_context": "High-travel customer, platinum tier; expects swift resolution and replacement card.",
       "evidence_analysis": [
         "[phone @ 2026-01-31T08:20:00Z] Freeze my card; Madrid charges are not mine.",
-        "[sms @ 2026-01-31T08:18:00Z] Alert: €240 POS Madrid",
+        "[sms @ 2026-01-31T08:18:00Z] Alert: EUR 240 POS Madrid",
         "[app @ 2026-01-31T08:15:00Z] Customer attempted to disable card but flow failed",
         "[crm @ 2026-01-31T08:22:00Z] Tier: Platinum; last travel location recorded: CDG",
         "[fraud @ 2026-01-31T08:25:00Z] Device fingerprint mismatch on recent authorization"
@@ -187,7 +187,7 @@
       ]
     },
     "evidence": [
-      { "source": "SMS Alert", "text": "€240 POS Madrid - was this you?", "time": "08:18" },
+      { "source": "SMS Alert", "text": "EUR 240 POS Madrid - was this you?", "time": "08:18" },
       { "source": "CRM", "text": "Tier Platinum; travel notice ended yesterday", "time": "08:22" }
     ],
     "status": "Unverified"
@@ -245,7 +245,7 @@
     "id": "CASE-2006",
     "title": "ATM network outage causing cardless cash failures",
     "summary": "Customers report cardless cash withdrawals failing with generic error at multiple branches in Dubai.",
-    "content": "Cardless cash isn't working at Mall of Emirates ATM. Tried twice, got error.",
+    "content": "Cardless cash is not working at Mall of Emirates ATM. Tried twice, got error.",
     "user": "dxb_client_77",
     "source": "App Feedback",
     "sourceType": "Mobile App",
@@ -281,7 +281,8 @@
       "key_considerations": [
         "Coordinate with ATM switch team for immediate rollback.",
         "Communicate outage banner in app for DXB region.",
-        "Track refunds for failed cardless transactions."]
+        "Track refunds for failed cardless transactions."
+      ]
     },
     "evidence": [
       { "source": "App", "text": "Cardless cash timed out at MOE ATM", "time": "11:18" },
@@ -319,7 +320,7 @@
         "[grafana @ 2026-01-31T11:28:00Z] P99 latency 2100ms vs baseline 800ms",
         "[pager @ 2026-01-31T11:27:00Z] Error budget burn rate 3.4",
         "[deploy @ 2026-01-31T11:20:00Z] Gateway v5.4.2 rolled to 50%",
-        "[slack @ 2026-01-31T11:25:00Z] Partner #payments channel reporting failures"
+        "[slack @ 2026-01-31T11:25:00Z] Partner payments channel reporting failures"
       ],
       "relevant_policy_excerpts": [
         "Payments SLO: rollback if P99 >1500ms for 10 minutes during business hours.",
@@ -386,5 +387,271 @@
       { "source": "WhatsApp", "text": "Voice note about insolvency", "time": "11:32" }
     ],
     "status": "Unverified"
+  },
+  {
+    "id": "CASE-2009",
+    "title": "OTP delivery delays causing transaction timeouts",
+    "summary": "SMS OTP delivery time increased to 90s for retail transfers; failures observed across carriers.",
+    "content": "My OTP arrived after the transfer expired. This has happened twice today.",
+    "user": "otp_delay_user",
+    "source": "App Feedback",
+    "sourceType": "Mobile App",
+    "type": "Service Incident",
+    "category": "ops",
+    "priority": "P1",
+    "riskLevel": "High",
+    "timestamp": "2026-01-31 12:05",
+    "confidence": 0.88,
+    "aiAnalysis": "Carrier latency spike; OTP SLA breached and causing failed transactions.",
+    "risk_scores": {
+      "virality": 18,
+      "churn": 35,
+      "compliance": 12,
+      "financial": 30,
+      "operational": 55
+    },
+    "reverse_prompt": {
+      "situation_background": "OTP provider routing changed for two carriers overnight.",
+      "customer_context": "Retail users executing bill payments and transfers during lunch peak.",
+      "evidence_analysis": [
+        "[sms @ 2026-01-31T11:58:00Z] OTP delivered in 92s",
+        "[monitoring @ 2026-01-31T12:01:00Z] OTP latency P95 = 87s",
+        "[support @ 2026-01-31T12:03:00Z] Multiple complaints about expired OTPs"
+      ],
+      "relevant_policy_excerpts": [
+        "Auth Ops: fail over to secondary OTP provider if P95 latency > 30s for 10 minutes."
+      ],
+      "similar_cases": ["ops_evt_411", "auth_evt_072"],
+      "key_considerations": [
+        "Trigger carrier failover and extend OTP timeout window.",
+        "Notify customers via in-app banner.",
+        "Monitor fraud exposure due to timeout extension."
+      ]
+    },
+    "evidence": [
+      { "source": "Monitoring", "text": "OTP latency P95 = 87s", "time": "12:01" },
+      { "source": "Support", "text": "Expired OTP complaints spike", "time": "12:03" }
+    ],
+    "status": "Open"
+  },
+  {
+    "id": "CASE-2010",
+    "title": "VIP account frozen due to false positive on sanctions check",
+    "summary": "High-value client blocked during international wire; threatens to move funds.",
+    "content": "My transfer was blocked for compliance reasons. This is unacceptable.",
+    "user": "vip_client_011",
+    "source": "Phone",
+    "sourceType": "Relationship Manager",
+    "type": "Customer Friction",
+    "category": "policy",
+    "priority": "P2",
+    "riskLevel": "High",
+    "timestamp": "2026-01-31 12:20",
+    "confidence": 0.84,
+    "aiAnalysis": "Potential false positive on sanctions screening; needs expedited compliance review.",
+    "risk_scores": {
+      "virality": 8,
+      "churn": 55,
+      "compliance": 60,
+      "financial": 40,
+      "operational": 25
+    },
+    "reverse_prompt": {
+      "situation_background": "Wire blocked after recent sanctions list update.",
+      "customer_context": "VIP client with large balances; escalation risk high.",
+      "evidence_analysis": [
+        "[rm @ 2026-01-31T12:18:00Z] Client threatened to move funds",
+        "[compliance @ 2026-01-31T12:19:00Z] Hit on name match score 0.73"
+      ],
+      "relevant_policy_excerpts": [
+        "Compliance Escalation: VIP false positives require review within 60 minutes."
+      ],
+      "similar_cases": ["comp_evt_119"],
+      "key_considerations": [
+        "Engage compliance for rapid clearance.",
+        "Provide client update through RM.",
+        "Document override rationale."
+      ]
+    },
+    "evidence": [
+      { "source": "Compliance", "text": "Name match score 0.73", "time": "12:19" }
+    ],
+    "status": "Escalated"
+  },
+  {
+    "id": "CASE-2011",
+    "title": "Regulator inquiry on suspicious transfers cluster",
+    "summary": "Central bank requests clarification on clustered transfers flagged by AML engine.",
+    "content": "Please provide transaction narratives for flagged transfers within 24 hours.",
+    "user": "regulator_contact",
+    "source": "Email",
+    "sourceType": "Regulatory",
+    "type": "Regulatory Inquiry",
+    "category": "policy",
+    "priority": "P0",
+    "riskLevel": "High",
+    "timestamp": "2026-01-31 12:30",
+    "confidence": 0.93,
+    "aiAnalysis": "High priority regulatory request; requires immediate AML coordination and documentation.",
+    "risk_scores": {
+      "virality": 5,
+      "churn": 10,
+      "compliance": 95,
+      "financial": 20,
+      "operational": 35
+    },
+    "reverse_prompt": {
+      "situation_background": "AML engine flagged a cluster of transfers linked to a new beneficiary network.",
+      "customer_context": "Regulator expects same-day response and audit trail.",
+      "evidence_analysis": [
+        "[email @ 2026-01-31T12:27:00Z] Regulator request received",
+        "[aml @ 2026-01-31T12:25:00Z] Cluster rule hit: pattern_21"
+      ],
+      "relevant_policy_excerpts": [
+        "AML SOP: respond to regulator inquiries within 24 hours; include KYC and transaction notes."
+      ],
+      "similar_cases": ["aml_evt_044", "aml_evt_051"],
+      "key_considerations": [
+        "Prepare narrative pack and SAR references.",
+        "Lock audit trail and approvals.",
+        "Inform legal counsel."
+      ]
+    },
+    "evidence": [
+      { "source": "AML", "text": "Cluster rule hit: pattern_21", "time": "12:25" }
+    ],
+    "status": "Open"
+  },
+  {
+    "id": "CASE-2012",
+    "title": "App crash on login after patch update",
+    "summary": "Crash rate spiked to 6% on Android 14; users stuck at login screen.",
+    "content": "After updating, the app closes when I enter my PIN.",
+    "user": "android_user_44",
+    "source": "App Feedback",
+    "sourceType": "Mobile App",
+    "type": "UX Defect",
+    "category": "ops",
+    "priority": "P2",
+    "riskLevel": "Medium",
+    "timestamp": "2026-01-31 12:42",
+    "confidence": 0.86,
+    "aiAnalysis": "Regression on Android login flow; likely related to biometric fallback change.",
+    "risk_scores": {
+      "virality": 22,
+      "churn": 30,
+      "compliance": 8,
+      "financial": 18,
+      "operational": 45
+    },
+    "reverse_prompt": {
+      "situation_background": "Patch 3.9.1 introduced new PIN animation.",
+      "customer_context": "Android users blocked from login; rising support tickets.",
+      "evidence_analysis": [
+        "[crash @ 2026-01-31T12:40:00Z] Null pointer in login flow",
+        "[support @ 2026-01-31T12:41:00Z] Users unable to access accounts"
+      ],
+      "relevant_policy_excerpts": [
+        "Mobile Ops: hotfix critical login issues within 6 hours."
+      ],
+      "similar_cases": ["ux_evt_090"],
+      "key_considerations": [
+        "Roll back animation patch.",
+        "Issue store hotfix.",
+        "Communicate workaround for affected users."
+      ]
+    },
+    "evidence": [
+      { "source": "Crashlytics", "text": "Null pointer in login flow", "time": "12:40" }
+    ],
+    "status": "Open"
+  },
+  {
+    "id": "CASE-2013",
+    "title": "Branch queue complaints trending on social",
+    "summary": "Multiple posts report 45+ minute wait times at two flagship branches.",
+    "content": "Been in line for 50 minutes at the branch, this is ridiculous.",
+    "user": "branch_customer",
+    "source": "Twitter",
+    "sourceType": "Social Media",
+    "type": "Service Experience",
+    "category": "brand",
+    "priority": "P3",
+    "riskLevel": "Low",
+    "timestamp": "2026-01-31 12:55",
+    "confidence": 0.78,
+    "aiAnalysis": "Localized service issue; monitor and inform branch ops.",
+    "risk_scores": {
+      "virality": 30,
+      "churn": 18,
+      "compliance": 4,
+      "financial": 6,
+      "operational": 22
+    },
+    "reverse_prompt": {
+      "situation_background": "Queue length rising during lunch peak.",
+      "customer_context": "Walk-in customers frustrated by limited counters.",
+      "evidence_analysis": [
+        "[twitter @ 2026-01-31T12:52:00Z] 50 minute wait at branch",
+        "[branch @ 2026-01-31T12:54:00Z] Staffing shortage due to sick leave"
+      ],
+      "relevant_policy_excerpts": [
+        "Branch Ops: trigger overflow staffing if wait >30 minutes."
+      ],
+      "similar_cases": ["svc_evt_031"],
+      "key_considerations": [
+        "Deploy additional tellers.",
+        "Post wait-time updates on digital channels.",
+        "Capture feedback for service recovery."
+      ]
+    },
+    "evidence": [
+      { "source": "Branch Ops", "text": "Staffing shortage reported", "time": "12:54" }
+    ],
+    "status": "Unverified"
+  },
+  {
+    "id": "CASE-2014",
+    "title": "Chargeback surge on digital wallet top-ups",
+    "summary": "Chargeback rate increased 3x on wallet top-ups; possible merchant abuse.",
+    "content": "We are seeing an uptick in disputed wallet top-ups since weekend campaign.",
+    "user": "fraud_analyst",
+    "source": "CRM",
+    "sourceType": "Internal",
+    "type": "Dispute Spike",
+    "category": "fraud",
+    "priority": "P1",
+    "riskLevel": "High",
+    "timestamp": "2026-01-31 13:10",
+    "confidence": 0.9,
+    "aiAnalysis": "Potential merchant abuse; freeze affected merchant IDs and review campaign traffic.",
+    "risk_scores": {
+      "virality": 12,
+      "churn": 22,
+      "compliance": 15,
+      "financial": 62,
+      "operational": 28
+    },
+    "reverse_prompt": {
+      "situation_background": "Weekend promo boosted wallet activity; disputes rising.",
+      "customer_context": "Merchants and users disputing top-up transactions.",
+      "evidence_analysis": [
+        "[crm @ 2026-01-31T13:05:00Z] Chargeback rate 3x baseline",
+        "[risk @ 2026-01-31T13:06:00Z] Merchant ID 883 flagged"
+      ],
+      "relevant_policy_excerpts": [
+        "Fraud Ops: suspend merchants with chargeback rate >1.5%."
+      ],
+      "similar_cases": ["fraud_evt_203"],
+      "key_considerations": [
+        "Suspend flagged merchants.",
+        "Notify card schemes as required.",
+        "Monitor consumer impact and refunds."
+      ]
+    },
+    "evidence": [
+      { "source": "Risk", "text": "Merchant ID 883 flagged", "time": "13:06" }
+    ],
+    "status": "Open"
   }
 ]

@@ -7,7 +7,7 @@ const palette = {
     Low: { border: "1px solid #DCFCE7", badgeBg: "#DCFCE7", badgeText: "#15803D", icon: <CheckCircle size={14} className="text-green-500" /> },
 };
 
-const IncomingSignalList = ({ signals, selectedSignal, onSelectSignal, getSourceIcon }) => (
+const IncomingSignalList = ({ signals, selectedSignal, onSelectSignal, getSourceIcon, onSeeAll }) => (
     <div className="flex-1 flex flex-col min-w-[340px]" style={{ marginLeft: "10px" }}>
         <div className="flex justify-between items-end mb-4 px-2">
             <h3 className="text-sm font-semibold text-gray-600 uppercase tracking-wider">Incoming Cases</h3>
@@ -22,9 +22,13 @@ const IncomingSignalList = ({ signals, selectedSignal, onSelectSignal, getSource
                 minHeight: 0,
                 paddingBottom: "6px",
             }}>
-            {(selectedSignal ? signals : signals.slice(0, 3)).map((signal, idx) => {
-                const risk = palette[signal.riskLevel] || palette.Low;
-                const isActive = selectedSignal?.id === signal.id;
+            {(() => {
+                const mainLimit = 3;
+                const detailLimit = 6;
+                const visible = selectedSignal ? signals.slice(0, detailLimit) : signals.slice(0, mainLimit);
+                return visible.map((signal, idx) => {
+                    const risk = palette[signal.riskLevel] || palette.Low;
+                    const isActive = selectedSignal?.id === signal.id;
                 return (
                     <div
                         key={signal.id}
@@ -105,10 +109,12 @@ const IncomingSignalList = ({ signals, selectedSignal, onSelectSignal, getSource
                         </div>
                     </div>
                 );
-            })}
+                });
+            })()}
             {signals.length > 3 ? (
                 <button
                     type="button"
+                    onClick={onSeeAll}
                     style={{
                         marginTop: "4px",
                         marginBottom: "25px",
