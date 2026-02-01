@@ -27,7 +27,7 @@ const PressureNode = ({ data, isConnectable }) => {
     const statusLabel = getPressureLabel(pressure);
 
     return (
-        <div className={`relative flex flex-col items-center justify-center p-8 rounded-2xl backdrop-blur-md transition-all duration-300 ${colors.bg} ${colors.glow} bg-opacity-90 border-2 ${colors.border} min-w-[280px] min-h-[160px]`}>
+        <div className={`relative flex flex-col items-center justify-center p-8 rounded-2xl backdrop-blur-md transition-all duration-300 ${colors.bg} ${colors.glow} bg-opacity-90 border-2 ${colors.border} min-w-[300px] min-h-[170px]`}>
 
             {/* Input Handle (Top) - not for root */}
             {!isRoot && (
@@ -39,18 +39,18 @@ const PressureNode = ({ data, isConnectable }) => {
                 />
             )}
 
-            <div className="text-center w-full mt-4">
+            <div className="text-center w-full mt-3">
                 {/* Subtitle / Type */}
-                <div className="text-white/60 text-xs uppercase tracking-widest font-semibold mb-1">
+                <div className="text-white/70 text-sm uppercase tracking-widest font-semibold mb-1">
                     {subtitle}
                 </div>
 
                 {/* Main Label */}
-                <div className="text-white font-bold text-lg mb-2">{label}</div>
+                <div className="text-white font-bold text-2xl mb-2">{label}</div>
 
                 {/* Status Badge */}
                 <div className="flex items-center justify-center gap-2 mb-3">
-                    <span className={`text-xs uppercase tracking-wider font-bold px-3 py-1 rounded-full ${pressure >= 71 ? 'bg-red-700/50 text-red-100' :
+                    <span className={`text-[12px] uppercase tracking-wider font-bold px-3.5 py-1.5 rounded-full ${pressure >= 71 ? 'bg-red-700/50 text-red-100' :
                         pressure >= 31 ? 'bg-yellow-600/50 text-yellow-100' :
                             'bg-emerald-700/50 text-emerald-100'
                         }`}>
@@ -59,14 +59,14 @@ const PressureNode = ({ data, isConnectable }) => {
                 </div>
 
                 {/* Pressure Bar */}
-                <div className="flex items-center justify-center gap-3">
-                    <div className="w-full bg-black/20 rounded-full h-2.5 overflow-hidden max-w-[120px]">
+                <div className="flex items-center justify-center gap-4">
+                    <div className="w-full bg-black/20 rounded-full h-3 overflow-hidden max-w-[140px]">
                         <div
                             className="h-full bg-white/90 rounded-full transition-all duration-500"
                             style={{ width: `${pressure}%` }}
                         />
                     </div>
-                    <span className="text-base text-white font-mono font-bold">{pressure}%</span>
+                    <span className="text-lg text-white font-mono font-bold">{pressure}%</span>
                 </div>
             </div>
 

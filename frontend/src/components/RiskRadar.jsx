@@ -365,9 +365,11 @@ const RiskRadar = ({ onNavigate, onOpenSignal }) => {
                     <div
                         style={{
                             display: "grid",
-                            gridTemplateColumns: "minmax(280px, 1.2fr) minmax(240px, 1fr) minmax(260px, 1fr)",
+                            gridTemplateColumns: "minmax(320px, 1.3fr) minmax(260px, 1fr)",
                             gap: "16px",
+                            alignItems: "start",
                         }}>
+                        <div style={{ display: "grid", gap: "16px" }}>
                         <div
                             style={{
                                 borderRadius: "18px",
@@ -461,7 +463,13 @@ const RiskRadar = ({ onNavigate, onOpenSignal }) => {
                                 {riskBuckets.map((bucket) => (
                                     <div
                                         key={bucket}
-                                        style={{ fontSize: "10px", color: "#64748b", textTransform: "uppercase", letterSpacing: "0.08em", textAlign: "center" }}>
+                                        style={{
+                                            fontSize: "10px",
+                                            color: "#64748b",
+                                            textTransform: "uppercase",
+                                            letterSpacing: "0.08em",
+                                            textAlign: "center",
+                                        }}>
                                         {bucket}
                                     </div>
                                 ))}
@@ -498,6 +506,105 @@ const RiskRadar = ({ onNavigate, onOpenSignal }) => {
                                     </React.Fragment>
                                 ))}
                             </div>
+                        </div>
+
+                        <div
+                            style={{
+                                display: "grid",
+                                gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+                                gap: "16px",
+                            }}>
+                            <div
+                                style={{
+                                    borderRadius: "18px",
+                                    border: "1px solid rgba(226,232,240,0.9)",
+                                    background: "rgba(255,255,255,0.85)",
+                                    padding: "16px",
+                                    display: "grid",
+                                    gap: "10px",
+                                }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                    <div style={{ fontSize: "12px", fontWeight: 700, color: "#0f172a", letterSpacing: "0.08em" }}>
+                                        CHANNEL MIX
+                                    </div>
+                                    <span style={{ fontSize: "11px", color: "#94a3b8" }}>Internal vs SNS</span>
+                                </div>
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "#334155" }}>
+                                    <span>Internal: {trendingHighlights.internalCount}</span>
+                                    <span>SNS: {trendingHighlights.snsCount}</span>
+                                </div>
+                                <div
+                                    style={{
+                                        height: "10px",
+                                        borderRadius: "999px",
+                                        background: "rgba(226,232,240,0.7)",
+                                        overflow: "hidden",
+                                    }}>
+                                    <div
+                                        style={{
+                                            width: `${trendingHighlights.total ? (trendingHighlights.internalCount / trendingHighlights.total) * 100 : 0}%`,
+                                            height: "100%",
+                                            background: "linear-gradient(90deg, #93c5fd, #60a5fa)",
+                                        }}
+                                    ></div>
+                                </div>
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "#64748b" }}>
+                                    <span>Top priority topic</span>
+                                    <span style={{ fontWeight: 700, color: priorityColors[trendingHighlights.topPriorityLevel] }}>
+                                        {trendingHighlights.topPriorityTopic}
+                                    </span>
+                                </div>
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "#64748b" }}>
+                                    <span>Most impacted team</span>
+                                    <span style={{ fontWeight: 700, color: "#0f172a" }}>{trendingHighlights.topTeam.team}</span>
+                                </div>
+                            </div>
+                            <div
+                                style={{
+                                    borderRadius: "18px",
+                                    border: "1px solid rgba(226,232,240,0.9)",
+                                    background: "rgba(255,255,255,0.85)",
+                                    padding: "16px",
+                                    display: "grid",
+                                    gap: "10px",
+                                }}>
+                                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                                    <div style={{ fontSize: "12px", fontWeight: 700, color: "#0f172a", letterSpacing: "0.08em" }}>
+                                        VIRALITY SUMMARY
+                                    </div>
+                                    <span style={{ fontSize: "11px", color: "#94a3b8" }}>High risk focus</span>
+                                </div>
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "#334155" }}>
+                                    <span>Highest risk channel</span>
+                                    <span style={{ fontWeight: 700, color: "#b91c1c" }}>
+                                        {heatmapHighlights.topChannel.channel} ({heatmapHighlights.topChannel.count})
+                                    </span>
+                                </div>
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "#64748b" }}>
+                                    <span>High risk total</span>
+                                    <span style={{ fontWeight: 700, color: "#0f172a" }}>{heatmapHighlights.totalHigh}</span>
+                                </div>
+                                <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "#64748b" }}>
+                                    <span>Internal vs SNS high risk</span>
+                                    <span style={{ fontWeight: 700, color: "#0f172a" }}>
+                                        {heatmapHighlights.internalHigh} / {heatmapHighlights.snsHigh}
+                                    </span>
+                                </div>
+                                <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
+                                    <div style={{ flex: 1, height: "8px", borderRadius: "999px", background: "rgba(239,68,68,0.12)" }}>
+                                        <div
+                                            style={{
+                                                width: `${heatmapHighlights.totalHigh ? (heatmapHighlights.internalHigh / heatmapHighlights.totalHigh) * 100 : 0}%`,
+                                                height: "100%",
+                                                borderRadius: "999px",
+                                                background: "#ef4444",
+                                            }}
+                                        ></div>
+                                    </div>
+                                    <span style={{ fontSize: "10px", color: "#94a3b8" }}>Internal share</span>
+                                </div>
+                            </div>
+                        </div>
                         </div>
 
                         <div
@@ -593,99 +700,6 @@ const RiskRadar = ({ onNavigate, onOpenSignal }) => {
                             </div>
                         </div>
                     </div>
-                    <div
-                        style={{
-                            marginTop: "16px",
-                            display: "grid",
-                            gridTemplateColumns: "repeat(2, minmax(0, 1fr))",
-                            gap: "16px",
-                        }}>
-                        <div
-                            style={{
-                                borderRadius: "18px",
-                                border: "1px solid rgba(226,232,240,0.9)",
-                                background: "rgba(255,255,255,0.85)",
-                                padding: "16px",
-                                display: "grid",
-                                gap: "10px",
-                            }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                <div style={{ fontSize: "12px", fontWeight: 700, color: "#0f172a", letterSpacing: "0.08em" }}>
-                                    CHANNEL MIX
-                                </div>
-                                <span style={{ fontSize: "11px", color: "#94a3b8" }}>Internal vs SNS</span>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "#334155" }}>
-                                <span>Internal: {trendingHighlights.internalCount}</span>
-                                <span>SNS: {trendingHighlights.snsCount}</span>
-                            </div>
-                            <div style={{ height: "10px", borderRadius: "999px", background: "rgba(226,232,240,0.7)", overflow: "hidden" }}>
-                                <div
-                                    style={{
-                                        width: `${trendingHighlights.total ? (trendingHighlights.internalCount / trendingHighlights.total) * 100 : 0}%`,
-                                        height: "100%",
-                                        background: "linear-gradient(90deg, #93c5fd, #60a5fa)",
-                                    }}
-                                ></div>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "#64748b" }}>
-                                <span>Top priority topic</span>
-                                <span style={{ fontWeight: 700, color: priorityColors[trendingHighlights.topPriorityLevel] }}>
-                                    {trendingHighlights.topPriorityTopic}
-                                </span>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "#64748b" }}>
-                                <span>Most impacted team</span>
-                                <span style={{ fontWeight: 700, color: "#0f172a" }}>{trendingHighlights.topTeam.team}</span>
-                            </div>
-                        </div>
-                        <div
-                            style={{
-                                borderRadius: "18px",
-                                border: "1px solid rgba(226,232,240,0.9)",
-                                background: "rgba(255,255,255,0.85)",
-                                padding: "16px",
-                                display: "grid",
-                                gap: "10px",
-                            }}>
-                            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                                <div style={{ fontSize: "12px", fontWeight: 700, color: "#0f172a", letterSpacing: "0.08em" }}>
-                                    VIRALITY SUMMARY
-                                </div>
-                                <span style={{ fontSize: "11px", color: "#94a3b8" }}>High risk focus</span>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "#334155" }}>
-                                <span>Highest risk channel</span>
-                                <span style={{ fontWeight: 700, color: "#b91c1c" }}>
-                                    {heatmapHighlights.topChannel.channel} ({heatmapHighlights.topChannel.count})
-                                </span>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "#64748b" }}>
-                                <span>High risk total</span>
-                                <span style={{ fontWeight: 700, color: "#0f172a" }}>{heatmapHighlights.totalHigh}</span>
-                            </div>
-                            <div style={{ display: "flex", justifyContent: "space-between", fontSize: "11px", color: "#64748b" }}>
-                                <span>Internal vs SNS high risk</span>
-                                <span style={{ fontWeight: 700, color: "#0f172a" }}>
-                                    {heatmapHighlights.internalHigh} / {heatmapHighlights.snsHigh}
-                                </span>
-                            </div>
-                            <div style={{ display: "flex", gap: "8px", alignItems: "center" }}>
-                                <div style={{ flex: 1, height: "8px", borderRadius: "999px", background: "rgba(239,68,68,0.12)" }}>
-                                    <div
-                                        style={{
-                                            width: `${heatmapHighlights.totalHigh ? (heatmapHighlights.internalHigh / heatmapHighlights.totalHigh) * 100 : 0}%`,
-                                            height: "100%",
-                                            borderRadius: "999px",
-                                            background: "#ef4444",
-                                        }}
-                                    ></div>
-                                </div>
-                                <span style={{ fontSize: "10px", color: "#94a3b8" }}>Internal share</span>
-                            </div>
-                        </div>
-                    </div>
-
                     <div
                         style={{
                             marginTop: "18px",

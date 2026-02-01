@@ -1,0 +1,541 @@
+[
+  {
+    "title": "Customer is threatening to file a complaint with the regulator regarding privacy...",
+    "category": "policy",
+    "priority": "P1",
+    "risk_scores": {
+      "virality": 0,
+      "churn": 0,
+      "compliance": 70,
+      "financial": 0,
+      "operational": 0
+    },
+    "reverse_prompt": {
+      "situation_background": "The case has been routed to the Legal team with Management as watchers, prioritized as P1 due to high compliance risk (70%). The primary concern is a potential regulatory complaint related to privacy practices and a request for data access, which are critical compliance issues under GDPR and other data protection laws.",
+      "customer_context": "The customer is threatening to file a complaint with the regulator regarding privacy practices and has requested data access. They are expressing dissatisfaction and are considering escalating the matter further if their concerns are not addressed.",
+      "evidence_analysis": [
+        "[email @ 2026-01-31T08:50:00Z] I am filing a complaint with the regulator about your privacy practices.",
+        "[crm @ 2026-01-31T09:35:00Z] Regulator complaint mentioned in email and customer requested data access. Privacy handling needed.",
+        "[sns @ 2026-01-31T10:40:00Z] If you do not fix this I will report it to the regulator."
+      ],
+      "relevant_policy_excerpts": [
+        "Complaint Handling (Customer Protection Mindset): Acknowledge the complaint, provide a complaint reference ID, explain the complaint handling process and expected timelines, and do not charge for complaint handling. If unresolved, provide the escalation path (Management and the official complaint resolution path).",
+        "Escalation Triggers: Escalate to Legal: legal threat, regulator mention, press mention, allegations of discrimination, harassment, or serious misconduct, requests about personal data deletion, access, or automated decision objections.",
+        "Data Privacy Requests (PDPL aware handling): Confirm receipt, request minimal verification through official channels, follow the internal privacy process, and do not promise an outcome or timeline beyond what policy allows."
+      ],
+      "similar_cases": [
+        "evt_crm_003",
+        "evt_email_004",
+        "evt_crm_010",
+        "evt_sns_006",
+        "evt_email_010"
+      ],
+      "key_considerations": [
+        "The customer's threat to file a complaint with the regulator and request for data access are significant compliance risks under GDPR and other data protection laws.",
+        "Ensure that all communications are compliant with legal and regulatory requirements, avoiding admissions of fault or definitive statements without evidence.",
+        "Preserve all evidence, including screenshots, links, and logs, and maintain the chain of custody.",
+        "Follow the internal privacy process for handling data access requests and ensure that no promises are made beyond what policy allows."
+      ]
+    }
+  },
+  {
+    "title": "Customer requested deletion of personal data and an access report, indicating a ...",
+    "category": "policy",
+    "priority": "P1",
+    "risk_scores": {
+      "virality": 0,
+      "churn": 0,
+      "compliance": 70,
+      "financial": 0,
+      "operational": 0
+    },
+    "reverse_prompt": {
+      "situation_background": "The incident has been routed to the Legal team with Management as watchers, prioritized as P1 due to its high compliance risk score (70). The primary concern is a customer's request for deletion of personal data and an access report, which indicates a compliance-sensitive policy matter under data privacy regulations such as PDPL.",
+      "customer_context": "The customer has requested the deletion of their personal data and an access report, indicating a desire to exercise their data privacy rights under relevant laws.",
+      "evidence_analysis": [
+        "[crm @ 2026-01-31T10:45:00Z] Customer requested deletion of personal data and an access report."
+      ],
+      "relevant_policy_excerpts": [
+        "From the Legal Playbook: 'If the customer requests: - access to personal data - correction or deletion - objection to automated processing Then: - confirm receipt - request minimal verification through official channels - follow the internal privacy process - do not promise an outcome or timeline beyond what policy allows'",
+        "From the Global Policy: 'Personal data rights (PDPL awareness) If the customer asks about their personal data, access, deletion, or correction: - acknowledge - route to Legal (and Data Privacy owner if applicable) - do not promise immediate deletion or outcomes'"
+      ],
+      "similar_cases": [
+        "evt_crm_010",
+        "evt_crm_003",
+        "evt_crm_002",
+        "evt_sns_009",
+        "evt_phone_011"
+      ],
+      "key_considerations": [
+        "The customer's request aligns with data privacy rights under PDPL, requiring careful handling to ensure compliance.",
+        "Avoid making definitive promises regarding the timeline or outcome of the data deletion request.",
+        "Ensure all interactions are documented and preserved as per the Legal Triage SOP."
+      ]
+    }
+  },
+  {
+    "title": "Customer is requesting a copy of their personal data and removal of their market...",
+    "category": "policy",
+    "priority": "P1",
+    "risk_scores": {
+      "virality": 0,
+      "churn": 0,
+      "compliance": 70,
+      "financial": 0,
+      "operational": 0
+    },
+    "reverse_prompt": {
+      "situation_background": "The incident has been routed to the Legal team with Management as watchers. The priority is set to P1 due to a high compliance risk score of 70. This indicates that the customer's request involves data privacy rights under PDPL, which requires careful handling to ensure compliance with legal and regulatory constraints.",
+      "customer_context": "The customer is requesting a copy of their personal data and the removal of their marketing profile. This aligns with their right to access and delete personal information under data protection laws such as PDPL.",
+      "evidence_analysis": [
+        "[email @ 2026-01-31T09:05:00Z] Please provide a copy of my personal data and remove my marketing profile."
+      ],
+      "relevant_policy_excerpts": [
+        "From the Legal Playbook: If the customer requests access to personal data, correction, deletion, or objection to automated processing, confirm receipt, request minimal verification through official channels, and follow the internal privacy process without promising an outcome or timeline beyond what policy allows.",
+        "From the Marketing Playbook: For high-risk incidents involving legal threats, data privacy concerns, or fraud allegations at scale, Legal and Management approval is required before posting any public response."
+      ],
+      "similar_cases": [
+        "evt_email_005",
+        "evt_chat_009",
+        "evt_sns_009",
+        "evt_phone_011",
+        "evt_crm_010"
+      ],
+      "key_considerations": [
+        "Ensure that the response complies with PDPL and other relevant data protection regulations.",
+        "Avoid making definitive statements or promises regarding the outcome of the request.",
+        "Coordinate with Legal and Management for approval before providing any public response.",
+        "Preserve all evidence related to the request and maintain the chain of custody."
+      ]
+    }
+  },
+  {
+    "title": "Customer reports repeated card decline issues requiring immediate resolution.",
+    "category": "service",
+    "priority": "P3",
+    "risk_scores": {
+      "virality": 0,
+      "churn": 0,
+      "compliance": 0,
+      "financial": 0,
+      "operational": 0
+    },
+    "reverse_prompt": {
+      "situation_background": "The primary team assigned is Development / IT with watchers from Product and Customer Service. The priority is set to P3, indicating a moderate level of urgency. There are currently no identified risks in terms of virality, churn, compliance, financial, or operational impact. However, the repeated nature of the card decline issues could potentially lead to higher churn or compliance risks if not resolved promptly.",
+      "customer_context": "The customer is experiencing repeated card declines when attempting to make payments. They have reported this issue occurring three times within the same week and require an immediate resolution.",
+      "evidence_analysis": [
+        "[chat @ 2026-01-31T09:02:00Z] My card keeps getting declined and I need this fixed today. This is the third time this week."
+      ],
+      "relevant_policy_excerpts": [
+        "Finance Playbook Version: 1.0 - Applies to: fees, billing disputes, refunds, chargebacks indicators, payment failures, reconciliation issues",
+        "## 2) Inputs From Dashboard - incident summary and evidence quotes - transaction references (masked) - requested action (refund, fee waiver, investigation) - priority and reputational risk indicators",
+        "## 3) Core Rules - Do not promise refunds or approvals. - Do not request sensitive credentials. - Keep records complete for auditability. - For suspected fraud or suspicious activity, coordinate with Legal and the financial crime function (if present).",
+        "## 5) Payment Failure Windows (For Outages) If there is a confirmed payment disruption: - record start and end window (approx) - identify impacted transaction types - coordinate with IT for root cause confirmation - provide Customer Service with clear guidance on what customers should do next"
+      ],
+      "similar_cases": [
+        "evt_chat_001",
+        "evt_sns_003",
+        "evt_email_012",
+        "evt_sns_011",
+        "evt_sns_015"
+      ],
+      "key_considerations": [
+        "The repeated card decline issues may indicate a technical bug or systemic error that requires immediate attention from the Development / IT team.",
+        "Ensure that the investigation process is thorough and documented to avoid compliance risks.",
+        "Do not commit to specific outcomes or timelines, as per the Finance Playbook guidelines.",
+        "Coordinate with IT to confirm the root cause and provide clear guidance to the customer on what actions they should take next."
+      ]
+    }
+  },
+  {
+    "title": "Customer is complaining about duplicate charges on their January subscription.",
+    "category": "billing",
+    "priority": "P3",
+    "risk_scores": {
+      "virality": 0,
+      "churn": 0,
+      "compliance": 0,
+      "financial": 25,
+      "operational": 0
+    },
+    "reverse_prompt": {
+      "situation_background": "The case has been routed to the Finance team with Customer Service as watchers. The priority level is P3, indicating a moderate level of urgency. The primary risk factor is financial, with a score of 25, suggesting potential financial loss or error. There are no immediate virality, churn, compliance, or operational risks identified.",
+      "customer_context": "The customer is reporting duplicate charges on their January subscription. They have observed two charges for the same period on both their chat and email communications.",
+      "evidence_analysis": [
+        "[chat @ 2026-01-31T09:10:00Z] I noticed two charges for my January subscription. Looks like a duplicate billing.",
+        "[email @ 2026-01-31T08:05:00Z] My January invoice shows two charges. Please review the duplicate billing."
+      ],
+      "relevant_policy_excerpts": [
+        "Finance Playbook Version: 1.0 Owner: Finance Operations Lead (demo) Applies to: fees, billing disputes, refunds, chargebacks indicators, payment failures, reconciliation issues",
+        "### Step 1: Validate identifiers - confirm customer identity through the official workflow (via Customer Service) - confirm transaction reference, date, amount, channel",
+        "### Step 2: Check internal systems - payment logs - fee schedule mapping - ledger entries and posting status - reversals and adjustments history",
+        "### Step 3: Classify the issue - duplicate charge - incorrect fee - missing reversal - pending vs posted confusion - FX rate concern (if applicable) - merchant dispute (card related)",
+        "### Step 4: Provide an investigation update To Customer Service: - what you checked - what you still need - estimated timeline (not a promise)",
+        "### Step 5: Resolution paths - correction: posting fix or adjustment request - refund request: submit for review and approval per policy - chargeback path: follow scheme process (if applicable) through the official channel",
+        "### Step 6: Document - decision and rationale - approval chain - timestamps - customer impact"
+      ],
+      "similar_cases": [
+        "evt_chat_002",
+        "evt_email_001",
+        "evt_sns_015",
+        "evt_sns_012",
+        "evt_chat_007"
+      ],
+      "key_considerations": [
+        "Ensure that the duplicate charges do not violate any regulatory constraints such as COUNTRY_LAW_ or GDPR_.",
+        "Verify the customer's claim by checking internal systems for payment logs, fee schedules, and ledger entries.",
+        "Document all findings and actions taken for auditability.",
+        "Escalate to management if the issue is part of a larger systemic problem or if there is a high risk of financial loss."
+      ]
+    }
+  },
+  {
+    "title": "Customer reports multiple unauthorized transfers and transactions on their accou...",
+    "category": "fraud",
+    "priority": "P1",
+    "risk_scores": {
+      "virality": 0,
+      "churn": 0,
+      "compliance": 70,
+      "financial": 0,
+      "operational": 0
+    },
+    "reverse_prompt": {
+      "situation_background": "The case has been routed to the Legal team with Management as watchers, prioritized as P1 due to high compliance risk (70%). The primary risk factor is the customer's report of multiple unauthorized transfers and transactions, which could indicate a serious security or fraud issue.",
+      "customer_context": "The customer is reporting multiple unauthorized transfers and transactions on their account. They have explicitly stated that they did not authorize these transactions and consider this a serious issue.",
+      "evidence_analysis": [
+        "[phone @ 2026-01-31T07:55:00Z] There is an unauthorized transfer from my account. I did not approve it.",
+        "[sns @ 2026-01-31T10:33:00Z] Unauthorized transfer posted on my account today. This is serious.",
+        "[chat @ 2026-01-31T09:42:00Z] There is an unauthorized card transaction on my account. I did not make this purchase.",
+        "[email @ 2026-01-31T09:50:00Z] There are unauthorized card charges on my account. I did not make these purchases.",
+        "[phone @ 2026-01-31T08:40:00Z] There are unauthorized card charges on my account today. I did not make these purchases."
+      ],
+      "relevant_policy_excerpts": [
+        "If the incident includes suspected fraud, unauthorized transactions, or suspicious activity: - do not ask the customer to share sensitive credentials - route to Legal (and Fraud/Compliance function if your org has one) - if internal reporting is required, follow the internal suspicious activity workflow and approved reporting channels",
+        "Escalate to Legal: - legal threat, regulator mention, press mention - allegations of discrimination, harassment, or serious misconduct - requests about personal data deletion, access, or automated decision objections"
+      ],
+      "similar_cases": [
+        "evt_sns_005",
+        "evt_phone_002",
+        "evt_chat_006",
+        "evt_email_008",
+        "evt_phone_005"
+      ],
+      "key_considerations": [
+        "The customer's claims of unauthorized transactions suggest a potential security breach or fraud, which is a high compliance risk.",
+        "Do not ask the customer for sensitive credentials or speculate on the cause.",
+        "Ensure all communications are reviewed by Legal, especially given the high compliance risk."
+      ]
+    }
+  },
+  {
+    "title": "Customer complains about unauthorized fees and charges on their account.",
+    "category": "billing",
+    "priority": "P3",
+    "risk_scores": {
+      "virality": 0,
+      "churn": 0,
+      "compliance": 0,
+      "financial": 25,
+      "operational": 0
+    },
+    "reverse_prompt": {
+      "situation_background": "The primary team assigned to this case is Finance, with Customer Service as watchers. The priority level is P3, indicating a moderate level of urgency. The risk profile shows a financial risk score of 25, with no significant virality, churn, compliance, or operational risks identified. The financial risk is attributed to the customer's complaints about unauthorized fees and charges, which could lead to dissatisfaction and potential financial loss if not addressed promptly.",
+      "customer_context": "The customer is experiencing unauthorized fees and charges on their account. They claim that they were charged a fee that should not apply to their account and that there are unauthorized card charges that they did not make. Additionally, the customer mentions being charged an overdraft fee despite having a positive balance the previous day.",
+      "evidence_analysis": [
+        "[phone @ 2026-01-31T08:10:00Z] I was charged a fee that should not apply to my account.",
+        "[phone @ 2026-01-31T08:40:00Z] There are unauthorized card charges on my account today. I did not make these purchases.",
+        "[email @ 2026-01-31T09:50:00Z] There are unauthorized card charges on my account. I did not make these purchases.",
+        "[sns @ 2026-01-31T11:22:00Z] Got hit with a fee that makes no sense. Explain this charge.",
+        "[chat @ 2026-01-31T09:50:00Z] I was charged an overdraft fee even though my balance was positive yesterday.",
+        "[chat @ 2026-01-31T09:42:00Z] There is an unauthorized card transaction on my account. I did not make this purchase."
+      ],
+      "relevant_policy_excerpts": [
+        "Finance Playbook Version: 1.0 Owner: Finance Operations Lead (demo) Applies to: fees, billing disputes, refunds, chargebacks indicators, payment failures, reconciliation issues",
+        "Core Rules: Do not promise refunds or approvals. Do not request sensitive credentials. Keep records complete for auditability. For suspected fraud or suspicious activity, coordinate with Legal and the financial crime function (if present).",
+        "Billing and Fees SOP: Validate identifiers, check internal systems, classify the issue, provide an investigation update, resolution paths, document the process."
+      ],
+      "similar_cases": [
+        "evt_phone_003",
+        "evt_phone_005",
+        "evt_email_008",
+        "evt_sns_012",
+        "evt_chat_007"
+      ],
+      "key_considerations": [
+        "The customer's claims of unauthorized fees and charges suggest potential policy violations or technical issues. Ensure that the fees and charges align with the fee schedule and regulatory constraints.",
+        "Check for discrepancies between the customer's claims and the actual transactions recorded in the system. Confirm the customer's identity and validate the transaction details.",
+        "If the issue involves unauthorized transactions, consider escalating to Legal for further investigation to ensure compliance with data privacy laws such as GDPR.",
+        "Document all steps taken during the investigation and resolution process to maintain auditability."
+      ]
+    }
+  },
+  {
+    "title": "Customer reports multiple unauthorized transactions on their account, indicating...",
+    "category": "fraud",
+    "priority": "P1",
+    "risk_scores": {
+      "virality": 0,
+      "churn": 0,
+      "compliance": 70,
+      "financial": 0,
+      "operational": 0
+    },
+    "reverse_prompt": {
+      "situation_background": "The case has been routed to the Legal team with Management as watchers, and it has been assigned a priority level of P1 due to the high compliance risk score of 70. The primary concern is the potential fraud indicated by multiple unauthorized transactions reported by the customer, which poses significant compliance and legal risks.",
+      "customer_context": "The customer is reporting unauthorized transactions on their account, including unauthorized card charges and transfers, which they did not initiate. They have communicated this concern through multiple channels including phone, email, chat, and social networks.",
+      "evidence_analysis": [
+        "[phone @ 2026-01-31T08:40:00Z] There are unauthorized card charges on my account today. I did not make these purchases.",
+        "[email @ 2026-01-31T09:50:00Z] There are unauthorized card charges on my account. I did not make these purchases.",
+        "[chat @ 2026-01-31T09:42:00Z] There is an unauthorized card transaction on my account. I did not make this purchase.",
+        "[sns @ 2026-01-31T10:33:00Z] Unauthorized transfer posted on my account today. This is serious."
+      ],
+      "relevant_policy_excerpts": [
+        "Finance Playbook Version: 1.0",
+        "## 3) Core Rules",
+        "- For suspected fraud or suspicious activity, coordinate with Legal and the financial crime function (if present).",
+        "## 6) High Risk and Escalation",
+        "- Escalate to Legal: allegations of fraud, unauthorized transactions at scale, regulator mention or legal threat, suspicious activity concerns."
+      ],
+      "similar_cases": [
+        "evt_phone_005",
+        "evt_email_008",
+        "evt_chat_006",
+        "evt_phone_003",
+        "evt_sns_005"
+      ],
+      "key_considerations": [
+        "The customer's claims of unauthorized transactions indicate potential fraud, which is a high compliance risk and requires immediate coordination with Legal.",
+        "Ensure that all actions taken comply with regulatory constraints such as GDPR and country-specific laws.",
+        "Do not commit to outcomes or share internal fee policy documents directly with the customer.",
+        "Escalate to Legal for further investigation and potential legal action."
+      ]
+    }
+  },
+  {
+    "title": "Customer threatens to post on social media, contact regulators, and cancel accou...",
+    "category": "service",
+    "priority": "P1",
+    "risk_scores": {
+      "virality": 40,
+      "churn": 50,
+      "compliance": 70,
+      "financial": 0,
+      "operational": 0
+    },
+    "reverse_prompt": {
+      "situation_background": "The customer's case has been routed to the Legal team with Management as watchers due to high compliance risk and a moderate risk of virality and churn. The priority is set to P1, indicating urgent action is required. The primary risk factors include the customer's threats to post on social media, contact regulators, and cancel their account, which could lead to reputational damage and potential legal issues.",
+      "customer_context": "The customer is experiencing significant service issues and is threatening to take several actions if these issues are not resolved immediately. They have expressed intent to post about the issue on social media, contact regulators, cancel their account, and even contact the press.",
+      "evidence_analysis": [
+        "[phone @ 2026-01-31T09:10:00Z] If you do not fix this today I will post about it on social media.",
+        "[sns @ 2026-01-31T10:40:00Z] If you do not fix this I will report it to the regulator.",
+        "[sns @ 2026-01-31T11:08:00Z] I am canceling if this does not get resolved today.",
+        "[sns @ 2026-01-31T10:47:00Z] I am contacting the press about this service failure.",
+        "[chat @ 2026-01-31T09:58:00Z] If this is not resolved today I will cancel our account and move providers."
+      ],
+      "relevant_policy_excerpts": [
+        "Complaint Handling (Customer Protection Mindset): Acknowledge the complaint, provide a complaint reference ID, explain the complaint handling process and expected timelines, and do not charge for complaint handling. If unresolved, provide the escalation path.",
+        "High Risk Patterns and How to Respond: For cancellation or churn threat, acknowledge and prioritize immediate resolution or escalations. For social media threat, respond calmly and confirm investigation. For legal threat, acknowledge and escalate to Legal + Management.",
+        "Escalation Triggers: Escalate to Management immediately for high reach SNS mentions, verified accounts, influencers, repeated unresolved contacts, and churn threats. Escalate to Legal for legal threats, regulator mentions, and press mentions."
+      ],
+      "similar_cases": [
+        "evt_phone_007",
+        "evt_chat_011",
+        "evt_sns_006",
+        "evt_sns_010",
+        "evt_sns_007"
+      ],
+      "key_considerations": [
+        "The customer's threats indicate a high risk of compliance issues and potential legal action. Ensure all responses are compliant with regulatory constraints such as GDPR and country-specific laws.",
+        "Acknowledge the customer's complaints and provide a clear timeline for resolution. Document all interactions and ensure that the complaint handling process is followed.",
+        "Escalate to Legal and Management as per the playbook guidelines to manage potential legal and reputational risks."
+      ]
+    }
+  },
+  {
+    "title": "Customer is threatening legal action and regulatory reporting due to unresolved ...",
+    "category": "account",
+    "priority": "P1",
+    "risk_scores": {
+      "virality": 40,
+      "churn": 0,
+      "compliance": 70,
+      "financial": 0,
+      "operational": 60
+    },
+    "reverse_prompt": {
+      "situation_background": "The customer situation has been routed to the Legal team with Management as watchers. The priority is set to P1 due to the high compliance risk (70) and operational risk (60). The customer is threatening legal action and regulatory reporting due to an unresolved account issue, which indicates a significant compliance and operational risk.",
+      "customer_context": "The customer is experiencing an unresolved account issue and is threatening legal action and regulatory reporting if the issue is not resolved promptly. They have communicated these threats via phone, email, and social media.",
+      "evidence_analysis": [
+        "[phone @ 2026-01-31T09:25:00Z] I am speaking with my lawyer if this issue is not resolved.",
+        "[email @ 2026-01-31T08:35:00Z] If this account issue is not resolved, my lawyer will contact you.",
+        "[sns @ 2026-01-31T10:40:00Z] If you do not fix this I will report it to the regulator."
+      ],
+      "relevant_policy_excerpts": [
+        "### 6.3 Legal threat\nExample: \"I will sue\"\n- acknowledge\n- do not debate\n- escalate to Legal + Management\n- do not provide legal conclusions",
+        "## 2) Core Rules\n- Avoid admissions of fault.\n- Avoid definitive statements without evidence.\n- Preserve evidence and maintain chain of custody.\n- Route potential suspicious activity through the appropriate internal reporting path.",
+        "## 8) Escalation Triggers\nEscalate to Legal:\n- legal threat, regulator mention, press mention\n- allegations of discrimination, harassment, or serious misconduct\n- requests about personal data deletion, access, or automated decision objections"
+      ],
+      "similar_cases": [
+        "evt_phone_008",
+        "evt_email_003",
+        "evt_chat_011",
+        "evt_sns_010",
+        "evt_phone_007"
+      ],
+      "key_considerations": [
+        "The customer's threats indicate a high compliance risk due to potential legal and regulatory involvement.",
+        "Ensure that all communications are cautious and do not admit fault or provide legal conclusions.",
+        "Preserve all evidence and maintain the chain of custody for potential legal review.",
+        "Escalate to Legal and Management as per the playbook guidelines."
+      ]
+    }
+  },
+  {
+    "title": "Customer needs information on why their payroll batch failed for audit purposes.",
+    "category": "service",
+    "priority": "P1",
+    "risk_scores": {
+      "virality": 0,
+      "churn": 0,
+      "compliance": 70,
+      "financial": 0,
+      "operational": 0
+    },
+    "reverse_prompt": {
+      "situation_background": "The case has been routed to the Legal team with Management as watchers, prioritized as P1. The primary risk is compliance with a score of 70, indicating significant regulatory scrutiny required. The customer is seeking detailed information regarding a payroll batch failure for audit purposes, which could potentially involve regulatory constraints and policy adherence.",
+      "customer_context": "The customer experienced a payroll batch failure and requires confirmation of the failure window for audit purposes. They have communicated this issue via both phone and email, emphasizing the need for timely and accurate information.",
+      "evidence_analysis": [
+        "[phone @ 2026-01-31T09:55:00Z] Our payroll batch failed and we need to know what went wrong.",
+        "[email @ 2026-01-31T09:35:00Z] Payroll transfer failed this morning and we need the failure window confirmed for our audit."
+      ],
+      "relevant_policy_excerpts": [
+        "Finance Playbook: Section 5 - Payment Failure Windows (For Outages): If there is a confirmed payment disruption, record start and end window (approx), identify impacted transaction types, coordinate with IT for root cause confirmation, and provide Customer Service with clear guidance on what customers should do next.",
+        "Development / IT Playbook: Section 4 - Standard Incident Workflow (SOP): Step 5 - Customer impact statement (for Customer Service): Provide a short update including what is impacted, who is impacted, when it started, and current status."
+      ],
+      "similar_cases": [
+        "evt_phone_010",
+        "evt_email_007",
+        "evt_sns_011",
+        "evt_sns_007",
+        "evt_phone_012"
+      ],
+      "key_considerations": [
+        "Ensure compliance with regulatory constraints by thoroughly investigating the payroll batch failure and confirming the failure window accurately.",
+        "Coordinate closely with IT to determine the root cause and provide a clear customer impact statement.",
+        "Escalate to Legal if there are any indications of regulatory violations or potential legal threats."
+      ]
+    }
+  },
+  {
+    "title": "Customer is asking how to set up recurring transfers as they cannot find the opt...",
+    "category": "service",
+    "priority": "P3",
+    "risk_scores": {
+      "virality": 0,
+      "churn": 0,
+      "compliance": 0,
+      "financial": 0,
+      "operational": 0
+    },
+    "reverse_prompt": {
+      "situation_background": "The incident has been routed to the Customer Service team with a priority level of P3. The risk scores indicate no immediate virality, churn, compliance, financial, or operational risks. The primary issue is the customer's inability to locate the option for setting up recurring transfers.",
+      "customer_context": "The customer is experiencing difficulty in finding the option to set up recurring transfers within the application. They have explicitly asked for guidance on how to perform this action.",
+      "evidence_analysis": [
+        "[phone @ 2026-01-31T10:40:00Z] Is there a way to set up recurring transfers? I cannot find the option."
+      ],
+      "relevant_policy_excerpts": [
+        "From the Finance Playbook: Ensure that all financial operations comply with country-specific laws and GDPR regulations. No commitments on outcomes should be made, and sensitive credentials should not be requested.",
+        "From the Customer Service Playbook: Verify identity before discussing account specifics, be empathetic without admitting fault, and provide a reference number and clear next step."
+      ],
+      "similar_cases": [
+        "evt_phone_013",
+        "evt_sns_005",
+        "evt_phone_002",
+        "evt_sns_015",
+        "evt_chat_004"
+      ],
+      "key_considerations": [
+        "Ensure that the customer's request does not violate any regulatory constraints or internal policies.",
+        "Verify the customer's identity before providing detailed assistance.",
+        "Do not commit to specific outcomes or timelines.",
+        "Document the interaction thoroughly for auditability."
+      ]
+    }
+  },
+  {
+    "title": "Customer inquired about receiving a phishing text using the company's brand name...",
+    "category": "fraud",
+    "priority": "P1",
+    "risk_scores": {
+      "virality": 0,
+      "churn": 0,
+      "compliance": 70,
+      "financial": 0,
+      "operational": 0
+    },
+    "reverse_prompt": {
+      "situation_background": "The incident involves a customer inquiry regarding a phishing text using the company's brand name. The primary team assigned is Legal, with Management as watchers, indicating a high priority (P1). The risk profile highlights a significant compliance risk (70), with no immediate virality, churn, financial, or operational risks noted. This prioritization is due to the potential legal and regulatory implications of brand misuse and phishing attempts.",
+      "customer_context": "The customer reported receiving a phishing text message that used the company's brand name. They are seeking guidance on how to proceed and ensure their safety.",
+      "evidence_analysis": [
+        "[phone @ 2026-01-31T10:55:00Z] I received a phishing text using your brand name. What should I do?"
+      ],
+      "relevant_policy_excerpts": [
+        "From Marketing Playbook: 'For high risk incidents, Legal + Management approval is required before posting.'",
+        "From Legal Playbook: 'Route potential suspicious activity through the appropriate internal reporting path.'",
+        "From Legal Playbook: 'Avoid admissions of fault. Avoid definitive statements without evidence. Preserve evidence and maintain chain of custody.'"
+      ],
+      "similar_cases": [
+        "evt_phone_014",
+        "evt_sns_013",
+        "evt_sns_007",
+        "evt_sns_005",
+        "evt_phone_003"
+      ],
+      "key_considerations": [
+        "Ensure that any communication with the customer does not admit fault or provide definitive statements without evidence.",
+        "Preserve all evidence related to the phishing text, including screenshots and logs.",
+        "Escalate to Legal and Management for approval of any public statements or further actions.",
+        "Avoid disclosing internal incident details or security information publicly."
+      ]
+    }
+  },
+  {
+    "title": "The user is requesting information on how to delete their account data and remov...",
+    "category": "account",
+    "priority": "P1",
+    "risk_scores": {
+      "virality": 0,
+      "churn": 0,
+      "compliance": 70,
+      "financial": 0,
+      "operational": 60
+    },
+    "reverse_prompt": {
+      "situation_background": "The incident has been routed to the Legal team with Management as watchers due to high compliance and operational risk scores (70 and 60 respectively). The primary concern is the customer's repeated requests to delete their account data and remove their marketing profile, which aligns with data protection regulations such as GDPR.",
+      "customer_context": "The customer is repeatedly contacting the support channels to request the deletion of their personal data and removal of their marketing profile. They also seek a copy of all personal data held by the company.",
+      "evidence_analysis": [
+        "[sns @ 2026-01-31T11:01:00Z] How do I delete my data? I want my account info removed.",
+        "[phone @ 2026-01-31T10:10:00Z] I want to know what personal data you store and how to remove it.",
+        "[chat @ 2026-01-31T10:06:00Z] Please provide a copy of all personal data you hold and delete my marketing profile.",
+        "[email @ 2026-01-31T09:05:00Z] Please provide a copy of my personal data and remove my marketing profile."
+      ],
+      "relevant_policy_excerpts": [
+        "From Customer Service Playbook: Escalate to Legal: requests about personal data deletion, access, or automated decision objections.",
+        "From Finance Playbook: Escalate to Legal: regulator mention or legal threat, suspicious activity concerns."
+      ],
+      "similar_cases": [
+        "evt_sns_009",
+        "evt_phone_011",
+        "evt_chat_009",
+        "evt_email_005",
+        "evt_phone_004"
+      ],
+      "key_considerations": [
+        "The customer's repeated requests for data deletion and access align with GDPR requirements, necessitating a legal review.",
+        "Ensure compliance with data protection laws when handling the request to avoid legal repercussions.",
+        "Escalate to Legal for guidance on handling the data deletion and access requests."
+      ]
+    }
+  }
+]

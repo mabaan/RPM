@@ -161,15 +161,19 @@ const SentimentHeatmap = ({
                                     initial={{ opacity: 0, y: 10, scale: 0.95 }}
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, y: 10, scale: 0.95 }}
-                                    className="absolute bottom-4 right-4 w-64 bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-2xl p-4 z-20"
+                                    className="absolute bottom-4 right-4 w-64 bg-white/90 backdrop-blur-xl border border-white/60 shadow-xl rounded-2xl z-20"
+                                    style={{ padding: "18px 20px 18px 20px" }}
                                 >
-                                    <div className="flex justify-between items-start mb-2">
-                                        <h4 className="font-bold text-gray-900">{activeCountry.name}</h4>
-                                        <button onClick={(e) => { e.stopPropagation(); onSelectCountry(null); }} className="text-gray-400 hover:text-gray-600">
+                                    <div className="flex justify-between items-center" style={{ marginBottom: "10px" }}>
+                                        <h4 className="font-bold text-gray-900" style={{ marginLeft: "2px" }}>{activeCountry.name}</h4>
+                                        <button
+                                            onClick={(e) => { e.stopPropagation(); onSelectCountry(null); }}
+                                            className="text-gray-400 hover:text-gray-600 p-1 rounded-full hover:bg-gray-100/70"
+                                        >
                                             <X size={14} />
                                         </button>
                                     </div>
-                                    <div className="flex items-center gap-2 mb-3">
+                                    <div className="flex items-center gap-2" style={{ marginLeft: "2px", marginBottom: "10px" }}>
                                         {/* Dynamic Icon Color based directly on getSentimentColor logic */}
                                         {activeCountry.sentiment >= 0.5 ? <TrendingUp size={14} className="text-green-600" /> :
                                             activeCountry.sentiment <= -0.2 ? <TrendingDown size={14} className="text-red-600" /> :
@@ -182,11 +186,11 @@ const SentimentHeatmap = ({
                                             {activeCountry.label}
                                         </span>
                                     </div>
-                                    <p className="text-xs text-gray-600 leading-relaxed mb-3">
+                                    <p className="text-xs text-gray-600 leading-relaxed" style={{ marginLeft: "2px", marginBottom: "12px" }}>
                                         {activeCountry.summary}
                                     </p>
-                                    <div className="bg-gray-50 rounded-lg p-2 border border-gray-100">
-                                        <div className="flex justify-between text-[10px] text-gray-500 mb-1 uppercase tracking-wider font-bold">
+                                    <div className="bg-gray-50 rounded-lg border border-gray-100" style={{ padding: "10px 12px", marginLeft: "2px" }}>
+                                        <div className="flex justify-between text-[11px] text-gray-500 uppercase tracking-wider font-bold" style={{ marginBottom: "6px" }}>
                                             <span>Brand Trust Index</span>
                                             <span>{activeCountry.brandTrust}/100</span>
                                         </div>
@@ -214,17 +218,18 @@ const SentimentHeatmap = ({
                     </div>
 
                     {/* Bottom Controls / Trust Bars - Increased padding (p-4) and spacing */}
-                    <div className="mt-2 p-4 grid grid-cols-3 gap-6">
+                    <div className="grid grid-cols-3 gap-6" style={{ marginTop: "8px", padding: "16px" }}>
                         {sentimentCountries.map((country) => (
                             <button
                                 key={country.iso}
                                 onClick={() => onSelectCountry(country)}
-                                className={`relative overflow-hidden px-4 py-4 rounded-2xl border transition-all duration-300 group ${activeCountry?.iso === country.iso
+                                className={`relative overflow-hidden rounded-2xl border transition-all duration-300 group ${activeCountry?.iso === country.iso
                                     ? "bg-white border-mashreq-orange/30 shadow-md ring-1 ring-mashreq-orange/20"
                                     : "bg-white/40 border-transparent hover:bg-white hover:border-white hover:shadow-sm"
-                                    }`}>
+                                    }`}
+                                style={{ padding: "18px 20px" }}>
 
-                                <div className="flex justify-center items-center mb-2 text-center w-full relative">
+                                <div className="flex justify-center items-center text-center w-full relative" style={{ marginBottom: "8px" }}>
                                     <span className={`text-xs font-bold ${activeCountry?.iso === country.iso ? "text-gray-900" : "text-gray-500 group-hover:text-gray-700"}`}>
                                         {country.name}
                                     </span>

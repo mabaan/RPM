@@ -88,23 +88,23 @@ const RootCause = () => {
 
                     {/* Stats Top Right */}
                     <div className="flex items-center gap-4">
-                        <div className="flex items-center bg-white/60 backdrop-blur-md px-4 py-3 rounded-xl border border-white/40 shadow-sm min-w-[150px]">
-                            <div className="p-1.5 bg-orange-100 text-mashreq-orange rounded-full flex-shrink-0">
+                        <div className="flex items-center gap-3 bg-white/60 backdrop-blur-md px-4 py-3 rounded-xl border border-white/40 shadow-sm min-w-[160px]">
+                            <div className="flex items-center justify-center w-8 h-8 bg-orange-100 text-mashreq-orange rounded-full flex-shrink-0">
                                 <Zap size={14} />
                             </div>
-                            <div className="flex-1 text-center">
-                                <div className="text-[10px] text-gray-500 font-bold uppercase">Relieved</div>
-                                <div className="font-mono font-bold text-gray-800 text-sm">{stats.pressureRelieved} PSI</div>
+                            <div className="flex-1 text-left">
+                                <div className="text-[11px] text-gray-500 font-bold uppercase tracking-wide">Relieved</div>
+                                <div className="font-mono font-bold text-gray-800 text-base">{stats.pressureRelieved} PSI</div>
                             </div>
                         </div>
 
-                        <div className="flex items-center bg-white/60 backdrop-blur-md px-4 py-3 rounded-xl border border-white/40 shadow-sm min-w-[150px]">
-                            <div className="p-1.5 bg-green-100 text-green-600 rounded-full flex-shrink-0">
+                        <div className="flex items-center gap-3 bg-white/60 backdrop-blur-md px-4 py-3 rounded-xl border border-white/40 shadow-sm min-w-[160px]">
+                            <div className="flex items-center justify-center w-8 h-8 bg-green-100 text-green-600 rounded-full flex-shrink-0">
                                 <SubjectTrophy size={14} />
                             </div>
-                            <div className="flex-1 text-center">
-                                <div className="text-[10px] text-gray-500 font-bold uppercase">Solved</div>
-                                <div className="font-mono font-bold text-gray-800 text-sm">{stats.nodesEliminated}</div>
+                            <div className="flex-1 text-left">
+                                <div className="text-[11px] text-gray-500 font-bold uppercase tracking-wide">Solved</div>
+                                <div className="font-mono font-bold text-gray-800 text-base">{stats.nodesEliminated}</div>
                             </div>
                         </div>
                     </div>

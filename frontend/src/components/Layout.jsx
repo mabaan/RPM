@@ -86,7 +86,7 @@ const Layout = () => {
             <div className="relative z-10 w-full h-full flex flex-col p-8 pr-40 transition-all duration-500 scale-[0.95] origin-center">
 
                 {/* Header */}
-                <header className="flex justify-between items-end mb-6 pl-2">
+                <header className="flex items-center justify-between mb-6 pl-2">
                     <div className="flex flex-col gap-1">
                         <div className="flex items-center gap-3">
                             <img src="/mashreq-logo.png" alt="Mashreq" className="h-10 object-contain drop-shadow-sm" />
@@ -131,7 +131,6 @@ const Layout = () => {
 
                         </h1>
                     </div>
-
                     <div className="flex items-center gap-4">
                         <p className="text-xs text-gray-600 font-semibold tracking-wide text-right leading-tight">
                             {nowText}
